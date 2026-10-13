@@ -1,5 +1,11 @@
 # Historial de versiones
 
+## 3.1.1
+
+- El logo de Memé pasa a ser una lámina rectangular con el logotipo completo
+  sobre su crema, del mismo tamaño que la de Memé Kids. Antes era la insignia
+  circular del original, que a ese tamaño dejaba el texto muy chico.
+
 ## 3.1.0
 
 - **Cerrar sesión y cambiar de emprendimiento desde el celular.** En pantalla

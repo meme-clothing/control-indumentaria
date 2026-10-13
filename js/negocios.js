@@ -20,7 +20,7 @@ export const NEGOCIOS = [
     nombre: 'Memé',
     detalle: 'Clothing',
     favicon: 'marca/favicon-meme.png',
-    logo: { src: 'marca/meme.png', ancho: 256, alto: 256, forma: 'insignia' },
+    logo: { src: 'marca/meme.png', ancho: 420, alto: 235, forma: 'lamina' },
     barra: { claro: '#FEEFDA', oscuro: '#140A0C' }
   },
   {

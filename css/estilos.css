@@ -777,14 +777,16 @@ tbody tr:hover{ background:var(--superficie-2) }
    emprendimiento activo. Acá no hay nada que ocultar. */
 .marca-logo{ display:block }
 
+/* Las dos marcas son láminas apaisadas del mismo tamaño. `insignia` queda
+   disponible por si algún emprendimiento futuro usa un logo circular. */
 .logo{ display:block }
+.logo-lamina{ width:100%; max-width:176px; height:auto; border-radius:var(--r-ch) }
 .logo-insignia{ width:44px; height:44px; border-radius:50% }
-.logo-lamina{ width:100%; max-width:168px; height:auto; border-radius:var(--r-ch) }
 /* La pantalla de ingreso no lleva marca: hasta que no se sabe quién entra, no
    se sabe de qué emprendimiento mostrarla. */
 .rail-tope .marca-logo{ margin-bottom:11px }
+.rail-tope .logo-lamina{ max-width:188px }
 .rail-tope .logo-insignia{ width:46px; height:46px }
-.rail-tope .logo-lamina{ max-width:184px }
 
 @media (max-width:860px){
   .rail-tope .marca-logo{ display:none }
