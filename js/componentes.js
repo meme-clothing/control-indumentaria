@@ -1,7 +1,7 @@
 /* Trozos de HTML que usan varias vistas. Devuelven texto, no tocan el DOM. */
 
 import { esc, plata, plataCorta, fechaCorta } from './utilidades.js';
-import { porDia, diasDe } from './negocio.js';
+import { porDia, diasDe, umbralDe } from './negocio.js';
 import { datos } from './almacen.js';
 
 export function cifra({ titulo, valor, pie, tono = '', acento = false }){
@@ -27,11 +27,12 @@ export function selectorRango(r, attr){
     </div>`;
 }
 
-/* Marca de un talle: normal, por reponer o agotado. */
-export const claseTalle = c => c === 0 ? 'cero' : (c <= datos.umbral ? 'bajo' : '');
+/* Marca de un talle: normal, por reponer o agotado.
+   El mínimo lo define cada producto, así que hay que pasarlo. */
+export const claseTalle = (c, p) => c === 0 ? 'cero' : (c <= umbralDe(p) ? 'bajo' : '');
 
-export const talle = (t, c, extra = '') =>
-  `<span class="talle ${claseTalle(c)}" ${extra}><b>${c}</b><small>${esc(t)}</small></span>`;
+export const talle = (t, c, p, extra = '') =>
+  `<span class="talle ${claseTalle(c, p)}" ${extra}><b>${c}</b><small>${esc(t)}</small></span>`;
 
 export function grafico(dias, r){
   const cubos = porDia(dias, r);

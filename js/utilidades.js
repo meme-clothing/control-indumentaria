@@ -87,7 +87,8 @@ export function avisar(texto, mal){
 
 let cerrarActual = null;
 
-export function dialogo({ titulo, cuerpo, pie, alAbrir }){
+export function dialogo({ titulo, cuerpo, pie, alAbrir, ancho }){
+  $('.dialogo').classList.toggle('dialogo-ancho', !!ancho);
   $('#dlg-titulo').textContent = titulo;
   $('#dlg-cuerpo').innerHTML = cuerpo;
   $('#dlg-pie').innerHTML = pie || '';

@@ -44,12 +44,12 @@ export function vistaPanel(){
                   <div class="prod-cat">${esc(p.categoria || 'Sin categoría')}</div></td>
               <td class="der">
                 <div class="talles" style="justify-content:flex-end">
-                  ${tallesBajos(p).map(([t, c]) => talle(t, c)).join('')}</div>
+                  ${tallesBajos(p).map(([t, c]) => talle(t, c, p)).join('')}</div>
                 ${enCamino(p) ? `<div class="ya-pedido">${enCamino(p)} en camino</div>` : ''}
               </td>
             </tr>`).join('')}
         </tbody></table></div>`
       : vacio({ titulo:'Todo con stock',
-                texto:`Ningún talle bajó de ${datos.umbral} unidades.` })}
+                texto:'Ningún producto llegó a su mínimo.' })}
     </section>`;
 }

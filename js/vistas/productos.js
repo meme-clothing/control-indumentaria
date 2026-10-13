@@ -3,9 +3,11 @@ import { $, $$, esc, plata, plataCorta, aCentavos, nid, avisar, dialogo, cerrarD
 import { datos, guardar } from '../almacen.js';
 import { buscar, activos, stockDe, valorStockVenta, precioDe, conStock,
          pedidosPorEstado, totalPedido, unidadesPedido, cambiosDeCosto,
-         recibirPedidos, precioPara, precioFijado, recargoDe } from '../negocio.js';
+         recibirPedidos, precioPara, precioFijado, recargoDe,
+         umbralDe, reponerHastaDe } from '../negocio.js';
 import { talle, vacio, buscador } from '../componentes.js';
-import { ESTADOS_PEDIDO, MEDIOS_PAGO } from '../config.js';
+import { ESTADOS_PEDIDO, MEDIOS_PAGO, UMBRAL_POR_DEFECTO,
+         REPONER_HASTA_POR_DEFECTO } from '../config.js';
 import { ui, bus, quienOpera } from '../estado.js';
 
 export function vistaProductos(){
@@ -36,7 +38,7 @@ export function vistaProductos(){
             <td><div class="prod-nombre">${esc(p.nombre)}</div>
                 <div class="prod-cat">${esc(p.categoria || 'Sin categoría')}</div></td>
             <td><div class="talles">${
-              conStock(p).map(([t, c]) => talle(t, c)).join('')
+              conStock(p).map(([t, c]) => talle(t, c, p)).join('')
               || '<span class="sin-stock">Sin stock</span>'}</div></td>
             <td class="der num">${plata(p.costoC)}</td>
             <td class="der num">${p.margen}%</td>
@@ -75,54 +77,66 @@ export function editorProducto(id){
   const categorias = [...new Set(datos.productos.map(x => x.categoria).filter(Boolean))];
 
   dialogo({
+    ancho: true,
     titulo: p ? 'Editar producto' : 'Nuevo producto',
     cuerpo: `
-      <div style="display:grid;gap:14px">
-        <label class="campo"><span>Nombre</span>
-          <input type="text" id="e-nombre" value="${esc(p ? p.nombre : '')}"
-                 placeholder="Remera oversize"></label>
-        <label class="campo"><span>Categoría</span>
-          <input type="text" id="e-cat" value="${esc(p ? p.categoria : '')}"
-                 placeholder="Remeras" list="cats">
-          <datalist id="cats">${categorias.map(c => `<option value="${esc(c)}">`).join('')}</datalist>
-        </label>
-        <div class="rejilla">
-          <label class="campo"><span>Costo por unidad</span>
-            <input type="text" id="e-costo" inputmode="decimal"
-              value="${p ? (p.costoC / 100).toString().replace('.', ',') : ''}" placeholder="8200"></label>
-          <label class="campo"><span>Margen de venta</span>
-            <input type="number" id="e-margen" value="${p ? p.margen : 120}" min="0" step="5"></label>
-        </div>
-        <div style="background:var(--marca-suave);border-radius:var(--r-ch);padding:11px 14px;
-                    display:flex;justify-content:space-between;align-items:baseline">
-          <span style="font-size:13.5px;color:var(--tinta)">Precio base, en efectivo</span>
-          <b class="num" id="e-precio" style="font-size:19px;color:var(--tinta)">—</b>
-        </div>
+      <div class="editor">
 
-        <div>
-          <span style="display:block;font-size:13px;color:var(--tinta-2);margin-bottom:4px;font-weight:500">
-            Precio por forma de cobro</span>
-          <p style="margin:0 0 9px;font-size:12.5px;color:var(--tinta-3);line-height:1.5">
-            Salen del recargo que pusiste en Ajustes. Si este producto tiene otro
-            precio, escribilo y queda fijo solo para él.</p>
-          <div class="precios-lista" id="e-precios"></div>
-        </div>
-        <div>
-          <span style="display:block;font-size:13px;color:var(--tinta-2);margin-bottom:7px;font-weight:500">
-            Stock por talle</span>
-          <div id="e-talles" style="display:grid;gap:8px"></div>
-          <div style="display:flex;gap:8px;margin-top:9px">
-            <input type="text" id="e-talle-nuevo" placeholder="Agregar talle (XXL, 46…)" style="flex:1">
+        <section class="editor-col">
+          <h4>Datos</h4>
+          <label class="campo"><span>Nombre</span>
+            <input type="text" id="e-nombre" value="${esc(p ? p.nombre : '')}"
+                   placeholder="Remera oversize"></label>
+          <label class="campo"><span>Categoría</span>
+            <input type="text" id="e-cat" value="${esc(p ? p.categoria : '')}"
+                   placeholder="Remeras" list="cats">
+            <datalist id="cats">${categorias.map(c => `<option value="${esc(c)}">`).join('')}</datalist>
+          </label>
+          <div class="rejilla">
+            <label class="campo"><span>Costo por unidad</span>
+              <input type="text" id="e-costo" inputmode="decimal"
+                value="${p ? (p.costoC / 100).toString().replace('.', ',') : ''}" placeholder="8200"></label>
+            <label class="campo"><span>Margen de venta</span>
+              <input type="number" id="e-margen" value="${p ? p.margen : 120}" min="0" step="5"></label>
+          </div>
+          <div class="precio-base">
+            <span>Precio base, en efectivo</span>
+            <b class="num" id="e-precio">—</b>
+          </div>
+
+          <h4 style="margin-top:20px">Control de stock</h4>
+          <p class="editor-nota">Cada producto tiene el suyo: no se rotan igual
+            una remera básica y una campera.</p>
+          <div class="rejilla">
+            <label class="campo"><span>Avisar cuando quede en</span>
+              <input type="number" id="e-umbral"
+                value="${p ? umbralDe(p) : UMBRAL_POR_DEFECTO}" min="0" max="99"></label>
+            <label class="campo"><span>Reponer hasta</span>
+              <input type="number" id="e-reponer"
+                value="${p ? reponerHastaDe(p) : REPONER_HASTA_POR_DEFECTO}" min="1" max="999"></label>
+          </div>
+        </section>
+
+        <section class="editor-col">
+          <h4>Stock por talle</h4>
+          <div id="e-talles" class="talles-editor"></div>
+          <div class="agregar-talle">
+            <input type="text" id="e-talle-nuevo" placeholder="Agregar talle (XXL, 46…)">
             <button class="btn chico" id="e-talle-mas">Agregar</button>
           </div>
-        </div>
 
-        <p class="firma">${p
-          ? `Cargado por ${esc(p.creadoPor || 'alguien')}${
-              p.creadoEl ? ' el ' + fechaLarga.format(new Date(p.creadoEl)) : ''}${
-              p.modificadoPor ? `. Última modificación de ${esc(p.modificadoPor)}` : ''}.`
-          : `Se va a guardar a nombre de ${esc(quienOpera())}.`}</p>
-      </div>`,
+          <h4 style="margin-top:20px">Precio por forma de cobro</h4>
+          <p class="editor-nota">Salen del recargo de Ajustes. Si este producto
+            tiene otro precio, escribilo y queda fijo solo para él.</p>
+          <div class="precios-lista" id="e-precios"></div>
+        </section>
+
+      </div>
+      <p class="firma">${p
+        ? `Cargado por ${esc(p.creadoPor || 'alguien')}${
+            p.creadoEl ? ' el ' + fechaLarga.format(new Date(p.creadoEl)) : ''}${
+            p.modificadoPor ? `. Última modificación de ${esc(p.modificadoPor)}` : ''}.`
+        : `Se va a guardar a nombre de ${esc(quienOpera())}.`}</p>`,
     pie: `${p ? '<button class="btn riesgo" id="e-borrar" style="margin-right:auto">Eliminar</button>' : ''}
           <button class="btn" data-cerrar>Cancelar</button>
           <button class="btn primario" id="e-guardar">Guardar</button>`,
@@ -221,8 +235,12 @@ export function editorProducto(id){
           return Object.keys(out).length ? out : undefined;
         };
 
+        const umbral = Math.max(0, parseInt($('#e-umbral').value) || 0);
+        const reponer = Math.max(1, parseInt($('#e-reponer').value) || 1);
+
         if (p){
-          Object.assign(p, { nombre, categoria: $('#e-cat').value.trim(), costoC, margen, talles: limpios });
+          Object.assign(p, { nombre, categoria: $('#e-cat').value.trim(), costoC, margen,
+                             talles: limpios, umbral, reponerHasta: reponer });
           p.precioC = precioDe(p);
           const f = limpiarFijos();
           if (f) p.precios = f; else delete p.precios;
@@ -233,6 +251,7 @@ export function editorProducto(id){
         } else {
           const np = { id: nid(), nombre, categoria: $('#e-cat').value.trim(),
                        costoC, margen, talles: limpios, activo: true,
+                       umbral, reponerHasta: reponer,
                        creadoPor: quienOpera(), creadoEl: hoyISO() };
           np.precioC = precioDe(np);
           const f = limpiarFijos();

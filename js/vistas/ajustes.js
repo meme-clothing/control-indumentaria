@@ -12,6 +12,7 @@ import { datos, modo, guardar, comoJSON, reemplazar, volverAlInicial, vaciar,
 import { productosEnAlerta, pedidosPorEstado, activos, stockDe } from '../negocio.js';
 import { disponible, porQueNo } from '../firebase.js';
 import { preferencia, aplicarTema } from '../tema.js';
+import { negociosPermitidos } from '../auth.js';
 import { VERSION, DESARROLLO, MEDIOS_PAGO } from '../config.js';
 import { ui, bus } from '../estado.js';
 
@@ -57,15 +58,31 @@ export function vistaAjustes(){
     <div style="display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(310px,1fr))">
 
       <section class="tarjeta">
-        <div class="tarjeta-tope"><h3>Estado</h3>
-          <span class="pastilla ${conexion.clase}" style="margin-left:auto">${conexion.texto}</span>
-        </div>
+        <div class="tarjeta-tope"><h3>Tu sesión</h3></div>
         <div class="tarjeta-cuerpo">
           <dl class="estado">
             <div><dt>Emprendimiento</dt><dd>${esc(negocioActual().nombre)}</dd></div>
             <div><dt>Usuario</dt><dd>${esc(ui.usuario ? ui.usuario.nombre : '—')}
               ${ui.usuario && ui.usuario.rol === 'admin'
                 ? '<span class="pastilla" style="margin-left:6px">admin</span>' : ''}</dd></div>
+          </dl>
+          <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:14px">
+            ${negociosPermitidos().length > 1
+              ? '<button class="btn" id="cambiar-negocio-2">Cambiar de emprendimiento</button>' : ''}
+            <button class="btn riesgo" id="salir-2">Cerrar sesión</button>
+          </div>
+          <p class="firma" style="text-align:left;margin-top:12px">
+            Desde el celular la barra lateral se achica a los iconos de abajo, así que
+            estas dos acciones viven también acá.</p>
+        </div>
+      </section>
+
+      <section class="tarjeta">
+        <div class="tarjeta-tope"><h3>Estado</h3>
+          <span class="pastilla ${conexion.clase}" style="margin-left:auto">${conexion.texto}</span>
+        </div>
+        <div class="tarjeta-cuerpo">
+          <dl class="estado">
             <div><dt>Último guardado</dt>
               <dd id="estado-guardado">${guardado ? hora.format(guardado) : 'sin cambios todavía'}</dd></div>
             <div><dt>Productos</dt>
@@ -99,20 +116,6 @@ export function vistaAjustes(){
             </select></label>
           <p class="firma" style="text-align:left;margin-top:10px">
             También se cambia con el botón de la barra lateral.</p>
-        </div>
-      </section>
-
-      <section class="tarjeta">
-        <div class="tarjeta-tope"><h3>Avisos de stock</h3></div>
-        <div class="tarjeta-cuerpo">
-          <label class="campo"><span>Avisame cuando un talle quede en esta cantidad o menos</span>
-            <input type="number" id="a-umbral" value="${datos.umbral}" min="0" max="50"></label>
-          <label class="campo" style="margin-top:12px">
-            <span>Al sugerir un pedido, reponer hasta esta cantidad por talle</span>
-            <input type="number" id="a-reponer" value="${datos.reponerHasta}" min="1" max="200"></label>
-          <p class="firma" style="text-align:left;margin-top:10px">
-            El sistema sabe qué reponer mirando el stock; cuánto pedir sale del
-            segundo número.</p>
         </div>
       </section>
 
@@ -198,11 +201,6 @@ export function vistaAjustes(){
     avisar('Tema actualizado');
   };
 
-  $('#a-umbral').onchange = e => {
-    datos.umbral = Math.max(0, parseInt(e.target.value) || 0);
-    guardar(); bus.pintar(); avisar('Aviso actualizado');
-  };
-
   /* Los recargos mueven el precio de todo el catálogo, así que al cambiarlos
      se repinta la pantalla entera. */
   document.querySelectorAll('[data-recargo]').forEach(campo => {
@@ -215,11 +213,6 @@ export function vistaAjustes(){
       avisar('Recargo actualizado');
     };
   });
-
-  $('#a-reponer').onchange = e => {
-    datos.reponerHasta = Math.max(1, parseInt(e.target.value) || 1);
-    guardar(); avisar('Cantidad sugerida actualizada');
-  };
 
   $('#a-exportar').onclick = () => {
     bajar(`respaldo-${negocioActual().id}-${dia(hoyISO())}.json`, comoJSON(), 'application/json');

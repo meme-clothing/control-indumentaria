@@ -20,6 +20,7 @@ await import(RAIZ+'/js/app.js');
 await new Promise(r=>setTimeout(r,400));
 const d=document;
 const paso=(n,f)=>{try{f();console.log('  ok  '+n)}catch(e){console.log('  MAL '+n+' → '+e.message);errores.push(n)}};
+const pasoA=async(n,f)=>{try{await f();console.log('  ok  '+n)}catch(e){console.log('  MAL '+n+' → '+e.message);errores.push(n)}};
 
 console.log('== marca ==');
 paso('el acceso NO lleva marca', ()=>{
@@ -37,24 +38,25 @@ paso('el de la barra está encima de "Control de stock"', ()=>{
   if(hijos.indexOf(tope.querySelector('.marca-logo')) > hijos.indexOf(tope.querySelector('h2')))
     throw new Error('quedó debajo del título');
 });
-paso('hay un logo por emprendimiento', ()=>{
-  ['meme','kids'].forEach(n=>{
-    if(!d.querySelector(`.logo-negocio[data-de="${n}"] img`)) throw new Error('falta el de '+n);
-  });
+await pasoA('se dibuja un solo logo, el del emprendimiento activo', async()=>{
+  const marca = await import(RAIZ+'/js/marca.js');
+  marca.aplicarMarca('meme');
+  let imgs = d.querySelectorAll('#marca-logo img');
+  if(imgs.length!==1) throw new Error('imágenes: '+imgs.length);
+  if(!imgs[0].getAttribute('src').includes('meme.png')) throw new Error('src: '+imgs[0].getAttribute('src'));
+  marca.aplicarMarca('kids');
+  imgs = d.querySelectorAll('#marca-logo img');
+  if(imgs.length!==1) throw new Error('quedaron '+imgs.length+' logos a la vez');
+  if(!imgs[0].getAttribute('src').includes('meme-kids.png')) throw new Error('src: '+imgs[0].getAttribute('src'));
+  marca.aplicarMarca('meme');
 });
-paso('cada logo trae medidas propias', ()=>{
-  d.querySelectorAll('.logo').forEach(l=>{
-    if(l.tagName.toLowerCase()==='svg' && !l.getAttribute('viewBox'))
-      throw new Error('un SVG sin viewBox no escala');
+paso('el logo trae medidas propias', ()=>{
+  d.querySelectorAll('#marca-logo img').forEach(l=>{
     if(!l.getAttribute('width') || !l.getAttribute('height'))
       throw new Error('sin width/height: si el CSS no carga, se dibuja enorme');
   });
 });
-paso('está el logo de cada emprendimiento', ()=>{
-  ['meme','kids'].forEach(n=>{
-    if(!d.querySelector(`.logo-negocio[data-de="${n}"]`)) throw new Error('falta el de '+n);
-  });
-});
+
 paso('el favicon sigue al emprendimiento', ()=>{
   const i=d.querySelector('link[rel="icon"]');
   if(!i) throw new Error('sin favicon');
@@ -117,7 +119,9 @@ paso('no quedan colores del tema anterior', async()=>{});
        alguno suelto. */
     const ini=css.indexOf(':root{'), fin=css.indexOf('html{ scroll-padding');
     const resto=css.slice(0,ini)+css.slice(fin);
-    const sueltos=(resto.match(/#[0-9a-fA-F]{3,8}\b|rgba?\([^)]*\)/g)||[])
+    /* Las rayas de Memé Kids se declaran como variable, igual que el resto. */
+    const sinVariables = resto.replace(/^\s*--[a-z-]+:[^;]+;/gm, '');
+    const sueltos=(sinVariables.match(/#[0-9a-fA-F]{3,8}\b|rgba?\([^)]*\)/g)||[])
       .filter(c=>c!=='#fff');
     if(sueltos.length) throw new Error('fuera de la paleta: '+[...new Set(sueltos)].join(', '));
   });

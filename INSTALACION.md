@@ -83,7 +83,12 @@ Lo que da la consola es **JavaScript**, no JSON. Para no convertirlo a mano:
 node herramientas/firebase-config.mjs
 ```
 
-Pegás el fragmento tal cual, Ctrl+D, y queda escrito `datos/firebase.json`.
+Pegás el fragmento tal cual y listo: la herramienta corta sola al reconocer el
+objeto completo, sin ninguna combinación de teclas. Queda escrito
+`datos/firebase.json`.
+
+Si preferís, guardá el fragmento en un `.txt` y pasalo como argumento:
+`node herramientas/firebase-config.mjs pegado.txt`
 Para revisar uno que ya exista:
 
 ```bash
@@ -233,7 +238,8 @@ Remera lisa	Remeras	8200	120	6	9	7	3
 ```
 
 Después, en **Ajustes → Recargo por forma de cobro**, cargar cuánto más cuesta
-pagar con cada medio. El precio del producto es el de efectivo; el resto sale
+pagar con cada medio. El mínimo de stock y la cantidad a reponer se cargan en
+cada producto, desde su ficha. El precio del producto es el de efectivo; el resto sale
 de ahí.
 
 ---

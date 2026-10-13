@@ -43,6 +43,7 @@
   --tinta-2: #6B5450;
   --tinta-3: #9B857E;
   --papel: #FEEFDA;
+  --raya: #FBF4E6;
   --superficie: #FFFFFF;
   --superficie-2: #FDF6EC;
   --linea: #EFDFCB;
@@ -74,6 +75,7 @@
   --tinta-2: #B2A098;
   --tinta-3: #80716B;
   --papel: #140A0C;
+  --raya: #1A1012;
   --superficie: #1E1315;
   --superficie-2: #271A1C;
   --linea: #332326;
@@ -105,6 +107,7 @@
   --tinta-2: #6E5B4B;
   --tinta-3: #9B8A7B;
   --papel: #FCE9ED;
+  --raya: #F6EFEA;
   --superficie: #FFFFFF;
   --superficie-2: #FDF4F6;
   --linea: #F0DCE1;
@@ -136,6 +139,7 @@
   --tinta-2: #AFA096;
   --tinta-3: #7D7068;
   --papel: #171410;
+  --raya: #1C1915;
   --superficie: #211C18;
   --superficie-2: #2A241F;
   --linea: #332C26;
@@ -769,14 +773,9 @@ tbody tr:hover{ background:var(--superficie-2) }
    ========================================================================== */
 /* El logo va incrustado en cada lugar donde aparece, no como sprite con <use>:
    son 6 KB y a cambio no depende de que el navegador resuelva la referencia. */
-/* Están los logos de los dos emprendimientos y se muestra el del elegido.
-   Memé es una insignia circular; Memé Kids, una lámina apaisada con sus
-   rayas. Las dos se apoyan igual en tema claro y en oscuro, así que no hace
-   falta una segunda versión de cada una. */
+/* El contenido de .marca-logo lo pone marca.js: solo el logo del
+   emprendimiento activo. Acá no hay nada que ocultar. */
 .marca-logo{ display:block }
-.logo-negocio{ display:none }
-:root[data-negocio="meme"] .logo-negocio[data-de="meme"]{ display:block }
-:root[data-negocio="kids"] .logo-negocio[data-de="kids"]{ display:block }
 
 .logo{ display:block }
 .logo-insignia{ width:44px; height:44px; border-radius:50% }
@@ -956,3 +955,66 @@ tbody tr:hover{ background:var(--superficie-2) }
 .recargo-campo{ display:flex; align-items:center; gap:5px; flex:none }
 .recargo-campo input{ width:76px; min-height:34px; padding:5px 9px; text-align:right; font-size:13.5px }
 .recargo-campo small{ color:var(--tinta-3); font-size:13px }
+
+/* ==========================================================================
+   EDITOR DE PRODUCTO
+   Dos columnas en pantalla grande para no tener que scrollear: a la izquierda
+   los datos y el control de stock, a la derecha los talles y los precios.
+   ========================================================================== */
+.dialogo-ancho{ max-width:860px }
+
+.editor{ display:grid; gap:24px; grid-template-columns:1fr 1fr; align-items:start }
+.editor-col{ display:grid; gap:13px; align-content:start; min-width:0 }
+.editor-col h4{
+  margin:0; font-size:13px; font-weight:600; letter-spacing:.02em;
+  text-transform:uppercase; color:var(--tinta-3);
+}
+.editor-nota{ margin:-6px 0 0; font-size:12.5px; color:var(--tinta-3); line-height:1.5 }
+
+.precio-base{
+  display:flex; justify-content:space-between; align-items:baseline;
+  background:var(--marca-suave); border-radius:var(--r-ch); padding:11px 14px;
+}
+.precio-base span{ font-size:13.5px; color:var(--tinta) }
+.precio-base b{ font-size:19px; color:var(--tinta) }
+
+.talles-editor{ display:grid; gap:8px }
+.agregar-talle{ display:flex; gap:8px }
+.agregar-talle input{ flex:1; min-width:0 }
+
+@media (max-width:760px){
+  .dialogo-ancho{ max-width:520px }
+  .editor{ grid-template-columns:1fr; gap:20px }
+}
+
+/* ==========================================================================
+   FONDO DE MEMÉ KIDS
+
+   Las rayas del logo, pero muy bajadas de tono. En el logo el contraste entre
+   el rosa y el verde es fuerte porque ahí no hay nada que leer; de fondo de una
+   aplicación, con ese contraste, las tablas y los números se vuelven difíciles.
+
+   Las tarjetas son opacas, así que el contenido se apoya sobre superficie
+   plena y las rayas solo se ven en los márgenes.
+   ========================================================================== */
+:root[data-negocio="kids"] body{
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--papel) 0, var(--papel) 46px,
+    var(--raya) 46px, var(--raya) 92px
+  );
+  background-attachment: fixed;
+}
+/* La barra superior es translúcida y desenfoca lo que pasa por debajo; sobre
+   las rayas eso deja un borde sucio. Se apoya en color pleno. */
+:root[data-negocio="kids"] .barra{ background:var(--papel) }
+
+@media (max-width:620px){
+  :root[data-negocio="kids"] body{
+    background-image: repeating-linear-gradient(
+      90deg,
+      var(--papel) 0, var(--papel) 30px,
+      var(--raya) 30px, var(--raya) 60px
+    );
+  }
+}

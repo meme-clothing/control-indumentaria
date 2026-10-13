@@ -129,7 +129,7 @@ document.addEventListener('click', ev => {
   if (t.id === 'elegir-salir'){ cerrarSesionUI(); return; }
 
   /* cambiar de emprendimiento ya estando adentro */
-  if (t.closest('#cambiar-negocio')){ dialogoNegocios(); return; }
+  if (t.closest('#cambiar-negocio') || t.closest('#cambiar-negocio-2')){ dialogoNegocios(); return; }
   const saltar = t.closest('[data-ir-negocio]');
   if (saltar && !saltar.disabled){ irANegocio(saltar.dataset.irNegocio); return; }
 
@@ -137,7 +137,7 @@ document.addEventListener('click', ev => {
   if (t.closest('.tema')){ alternarTema(); return; }
 
   /* sesión */
-  if (t.id === 'salir'){ cerrarSesionUI(); return; }
+  if (t.id === 'salir' || t.id === 'salir-2'){ cerrarSesionUI(); return; }
 });
 
 /* Las dos fechas del rango libre. `change` y no `click`, por eso va aparte. */

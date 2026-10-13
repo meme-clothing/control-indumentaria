@@ -31,7 +31,7 @@ export function vistaVender(){
         <div class="precio num">${plata(precioPara(p, ui.medioPago))}${
           recargoDe(ui.medioPago) ? `<small>+${recargoDe(ui.medioPago)}%</small>` : ''}</div>
         <div class="talles">${conStock(p).map(([t, c]) => `
-          <button class="talle ${claseTalle(c)}"
+          <button class="talle ${claseTalle(c, p)}"
             data-sumar="${p.id}" data-talle="${esc(t)}" title="${c} en stock">
             <b>${esc(t)}</b><small>${c}</small></button>`).join('')
           || '<span class="sin-stock">Sin stock</span>'}</div>

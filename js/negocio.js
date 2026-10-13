@@ -1,6 +1,17 @@
 /* Cálculos puros sobre la base. No tocan el DOM ni guardan nada. */
 
 import { datos } from './almacen.js';
+import { UMBRAL_POR_DEFECTO, REPONER_HASTA_POR_DEFECTO } from './config.js';
+
+/* Cada producto define cuándo avisar y hasta cuánto reponer. Los que no lo
+   tengan cargado usan el valor por defecto, así una base vieja no queda sin
+   avisos de un día para el otro. */
+export const umbralDe = p =>
+  Number.isFinite(Number(p && p.umbral)) ? Number(p.umbral) : UMBRAL_POR_DEFECTO;
+
+export const reponerHastaDe = p =>
+  Number.isFinite(Number(p && p.reponerHasta)) && Number(p.reponerHasta) > 0
+    ? Number(p.reponerHasta) : REPONER_HASTA_POR_DEFECTO;
 
 export const precioDe = p => Math.round(p.costoC * (1 + p.margen / 100));
 export const stockDe  = p => Object.values(p.talles || {}).reduce((a, b) => a + (b || 0), 0);
@@ -19,7 +30,8 @@ export function conStock(p){
 }
 
 export function tallesBajos(p){
-  return Object.entries(p.talles || {}).filter(([, c]) => c <= datos.umbral);
+  const u = umbralDe(p);
+  return Object.entries(p.talles || {}).filter(([, c]) => c <= u);
 }
 
 export function productosEnAlerta(){
@@ -200,9 +212,9 @@ export function yaPedido(productoId, talle){
    El programa decide QUÉ; cuánto sale de `reponerHasta`, que se configura en
    Ajustes. Descuenta lo que ya está pedido para no duplicar. */
 export function sugerenciasDePedido(){
-  const meta = datos.reponerHasta;
   const lineas = [];
   activos().forEach(p => {
+    const meta = reponerHastaDe(p);
     tallesBajos(p).forEach(([t, c]) => {
       const falta = meta - c - yaPedido(p.id, t);
       if (falta > 0) lineas.push({

@@ -12,12 +12,17 @@
    `const`, sin punto y coma y sin comentarios.
 
    Uso:
-     node herramientas/firebase-config.mjs                 (pegás y Ctrl+D)
-     node herramientas/firebase-config.mjs pegado.txt
-     node herramientas/firebase-config.mjs --verificar     (revisa el actual)
+     node herramientas/firebase-config.mjs              pegás y listo
+     node herramientas/firebase-config.mjs pegado.txt   desde un archivo
+     node herramientas/firebase-config.mjs --verificar  revisa el que ya existe
+
+   Al pegar, termina solo cuando reconoce el objeto completo. No hace falta
+   ninguna combinación de teclas: Ctrl+D es de Linux y Mac, y en Windows sería
+   Ctrl+Z y Enter, que es justo la clase de detalle que hace fallar el paso.
    -------------------------------------------------------------------------- */
 
 import { readFile, writeFile } from 'node:fs/promises';
+import { createInterface } from 'node:readline';
 import { existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -81,18 +86,45 @@ function revisar(config){
   return avisos;
 }
 
+/* Se junta lo pegado línea por línea y se corta solo cuando el objeto cerró:
+   cuando ya apareció apiKey y las llaves quedaron balanceadas. Así la persona
+   pega y listo, sin teclas raras. Igual se respeta el fin de entrada, por si
+   llega por tubería. */
+function leerPegado(){
+  return new Promise(resolve => {
+    const lineas = [];
+    let abiertas = 0, vioApiKey = false, empezo = false;
+
+    if (process.stdin.isTTY){
+      console.log('');
+      console.log('  Pegá el fragmento de la consola de Firebase.');
+      console.log('  (termina solo al reconocer el objeto)');
+      console.log('');
+    }
+
+    const rl = createInterface({ input: process.stdin });
+    rl.on('line', linea => {
+      lineas.push(linea);
+      if (/apiKey/.test(linea)) vioApiKey = true;
+      for (const c of linea){
+        if (c === '{'){ abiertas++; empezo = true; }
+        else if (c === '}') abiertas--;
+      }
+      if (empezo && vioApiKey && abiertas <= 0){
+        rl.close();
+        /* Cerrar el lector no alcanza: mientras la entrada siga abierta, Node
+           no termina y el proceso queda colgado después de escribir. */
+        process.stdin.destroy();
+      }
+    });
+    rl.on('close', () => resolve(lineas.join('\n')));
+  });
+}
+
 async function leerEntrada(){
   const arg = process.argv[2];
   if (arg && arg !== '--verificar') return readFile(arg, 'utf8');
-
-  if (process.stdin.isTTY){
-    console.log('');
-    console.log('  Pegá el fragmento de la consola de Firebase y terminá con Ctrl+D:');
-    console.log('');
-  }
-  const partes = [];
-  for await (const c of process.stdin) partes.push(c);
-  return Buffer.concat(partes).toString('utf8');
+  return leerPegado();
 }
 
 /* ---- verificar el archivo que ya existe ---- */

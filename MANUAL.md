@@ -186,6 +186,9 @@ el botón está apagado.
 - **Nombre** y **Categoría**. La categoría sugiere las que ya existen.
 - **Costo por unidad** y **Margen de venta**. Debajo se ve el **precio de venta
   calculado**, que se actualiza mientras se escribe.
+- **Control de stock**: cuándo avisar que un talle se está por terminar, y
+  hasta cuántas unidades reponer al sugerir un pedido. Cada producto tiene el
+  suyo: no se rotan igual una remera básica y una campera.
 - **Stock por talle**: una fila por talle, con su cantidad. Se pueden agregar
   talles nuevos (S, M, XXL, 38, 42, lo que use el negocio) y quitar los que no
   correspondan.
@@ -450,6 +453,12 @@ tarjeta de Respaldo muestra un aviso.
 
 Tema claro, oscuro, o seguir al del sistema. Arranca en claro. También se
 cambia con el botón de la barra lateral.
+
+### Tu sesión
+
+Arriba de todo: en qué emprendimiento estás, con qué usuario, y los botones
+para cambiar de emprendimiento y cerrar sesión. Están acá además de en la barra
+lateral porque desde el celular esa barra se reduce a los iconos de abajo.
 
 ### Recargo por forma de cobro
 

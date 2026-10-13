@@ -70,5 +70,33 @@ await probar('sin apiKey, se rechaza', `{ projectId: "p8" }`, 'falla');
 await probar('texto sin objeto, se rechaza', `no pegué nada útil`, 'falla');
 await probar('llave sin cerrar, se rechaza', `const c = { apiKey: "x", projectId: "p9"`, 'falla');
 
+
+/* Que el pegado interactivo termine solo, sin depender de Ctrl+D ni Ctrl+Z */
+console.log('\n== pegado que corta solo ==');
+{
+  const { spawn } = await import('node:child_process');
+  const casos = [
+    ['fragmento completo con initializeApp después',
+     'import { initializeApp } from "firebase/app";\nconst firebaseConfig = {\n  apiKey: "AIza-x",\n  projectId: "pA"\n};\nconst app = initializeApp(firebaseConfig);\n'],
+    ['objeto en una sola línea', '{ apiKey: "AIza-x", projectId: "pB" }\n'],
+    ['objeto con llaves anidadas', 'const c = {\n  apiKey: "AIza-x",\n  projectId: "pC",\n  extra: { a: 1 }\n};\n']
+  ];
+  for (const [nombre, entrada] of casos){
+    const salida = await new Promise(ok => {
+      const hijo = spawn('node', [resolve(RAIZ,'herramientas/firebase-config.mjs')], { stdio:['pipe','pipe','pipe'] });
+      let out=''; hijo.stdout.on('data',d=>out+=d); hijo.stderr.on('data',d=>out+=d);
+      const corte = setTimeout(()=>{ hijo.kill(); ok('SE QUEDÓ ESPERANDO'); }, 4000);
+      hijo.on('close', ()=>{ clearTimeout(corte); ok(out); });
+      hijo.stdin.write(entrada);
+      /* a propósito no se cierra la entrada: así se comprueba que corta solo */
+    });
+    try{
+      if (salida.includes('SE QUEDÓ ESPERANDO')) throw new Error('no terminó solo');
+      const j = JSON.parse(await readFile(resolve(RAIZ,'datos/firebase.json'),'utf8'));
+      if (!j.projectId) throw new Error('no escribió el archivo');
+      console.log('  ok  ' + nombre);
+    }catch(e){ console.log('  MAL ' + nombre + ' → ' + e.message); errores.push(nombre); }
+  }
+}
 console.log('\n' + (errores.length ? 'FALLOS: ' + errores.join(', ') : 'sin errores'));
 process.exit(errores.length ? 1 : 0);

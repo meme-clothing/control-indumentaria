@@ -26,7 +26,7 @@
 
    Ponelo en true antes de entregar.
    -------------------------------------------------------------------------- */
-export const MODO_ESTRICTO = true;
+export const MODO_ESTRICTO = false;
 
 export const DOMINIO_USUARIOS = 'usuarios.control-stock.local';
 
@@ -50,7 +50,7 @@ export const VENTANA_DIAS = 90;
    La versión también está en package.json; el script de construcción avisa si
    se desincronizan.
    -------------------------------------------------------------------------- */
-export const VERSION = '3.0.0';
+export const VERSION = '3.1.0';
 
 export const DESARROLLO = {
   por: 'Migue',

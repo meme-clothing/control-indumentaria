@@ -1,5 +1,27 @@
 # Historial de versiones
 
+## 3.1.0
+
+- **Cerrar sesión y cambiar de emprendimiento desde el celular.** En pantalla
+  chica la barra lateral se reduce a los iconos de abajo y esas dos acciones
+  quedaban fuera de alcance. Ahora están también en Ajustes, arriba de todo.
+- **Un solo logo a la vez.** Antes estaban los dos en el documento y una regla
+  de CSS ocultaba el que no correspondía; si esa regla no se aplicaba,
+  aparecían juntos. Ahora el logo lo dibuja el programa: el otro directamente
+  no existe.
+- **Fondo a rayas en Memé Kids**, tomado del logo pero muy bajado de tono. Con
+  el contraste original, las tablas y los números se vuelven difíciles de leer.
+- **El control de stock pasó de Ajustes a cada producto.** Cada uno define
+  cuándo avisar y hasta cuánto reponer: no se rotan igual una remera básica y
+  una campera. Los productos que no lo tengan cargado usan el valor por
+  defecto.
+- **El editor de producto es más ancho y va en dos columnas**: datos y control
+  de stock a la izquierda, talles y precios a la derecha. En pantalla chica
+  vuelve a una sola columna.
+- El conversor de configuración termina solo al reconocer el objeto pegado.
+  Antes pedía Ctrl+D, que es de Linux y Mac; en Windows hay que hacer Ctrl+Z y
+  Enter, y eso no estaba dicho en ningún lado.
+
 ## 3.0.0
 
 Instalación de Memé, con sus dos emprendimientos, y precios por forma de cobro.

@@ -221,23 +221,39 @@ paso('cancelar no toca el stock', ()=>{
 });
 
 console.log('== reponerHasta ==');
-paso('el ajuste cambia la cantidad sugerida', ()=>{
-  const antes=alm.datos.reponerHasta;
-  alm.datos.reponerHasta=20;
+paso('el valor de cada producto cambia la cantidad sugerida', ()=>{
+  const prods = neg.activos();
+  const previos = prods.map(p => p.reponerHasta);
+  prods.forEach(p => p.reponerHasta = 20);
   const conVeinte=neg.sugerenciasDePedido();
-  alm.datos.reponerHasta=3;
+  prods.forEach(p => p.reponerHasta = 3);
   const conTres=neg.sugerenciasDePedido();
-  alm.datos.reponerHasta=antes;
+  prods.forEach((p,i) => p.reponerHasta = previos[i]);
   const s20=conVeinte.reduce((a,x)=>a+x.cant,0);
   const s3=conTres.reduce((a,x)=>a+x.cant,0);
   if(s20<=s3) throw new Error(`con 20 sugiere ${s20} y con 3 sugiere ${s3}`);
 });
-paso('está en Ajustes', ()=>{
+paso('está en la ficha de cada producto, no en Ajustes', ()=>{
   ver('ajustes');
-  if(!d.getElementById('a-reponer')) throw new Error('sin campo');
-  const i=d.getElementById('a-reponer');
-  i.value='9'; i.dispatchEvent(new Event('change'));
-  if(alm.datos.reponerHasta!==9) throw new Error('no guardó');
+  if(d.getElementById('a-reponer')) throw new Error('quedó en Ajustes');
+  const prod = neg.activos()[0];
+  ver('productos');
+  d.querySelector(`[data-editar="${prod.id}"]`).click();
+  const campo = d.getElementById('e-reponer');
+  if(!campo) throw new Error('la ficha no lo tiene');
+  campo.value = '9';
+  d.getElementById('e-umbral').value = '3';
+  d.getElementById('e-guardar').click();
+  if(neg.reponerHastaDe(prod)!==9) throw new Error('no guardó: '+neg.reponerHastaDe(prod));
+  if(neg.umbralDe(prod)!==3) throw new Error('umbral: '+neg.umbralDe(prod));
+});
+paso('cada producto puede tener un mínimo distinto', ()=>{
+  const a = neg.activos()[0], b = neg.activos()[1];
+  if(neg.umbralDe(a) === neg.umbralDe(b) && neg.umbralDe(a) !== 3)
+    throw new Error('no se pueden diferenciar');
+  const sinCargar = { talles:{M:1} };
+  if(neg.umbralDe(sinCargar) !== 2)
+    throw new Error('un producto sin mínimo propio no toma el valor por defecto');
 });
 
 console.log('== base vieja sin pedidos ==');
