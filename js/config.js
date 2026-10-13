@@ -26,7 +26,7 @@
 
    Ponelo en true antes de entregar.
    -------------------------------------------------------------------------- */
-export const MODO_ESTRICTO = false;
+export const MODO_ESTRICTO = true;
 
 export const DOMINIO_USUARIOS = 'usuarios.control-stock.local';
 
