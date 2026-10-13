@@ -1,0 +1,1511 @@
+{
+  "version": 1,
+  "generado": "2026-09-23T14:02:27.154Z",
+  "umbral": 2,
+  "reponerHasta": 6,
+  "productos": [
+    {
+      "id": "demo001",
+      "nombre": "Remera algodón peinado",
+      "categoria": "Remeras",
+      "costoC": 820000,
+      "margen": 120,
+      "precioC": 1804000,
+      "talles": {
+        "S": 1,
+        "M": 3,
+        "L": 6,
+        "XL": 3
+      },
+      "activo": true,
+      "creadoPor": "Mica",
+      "creadoEl": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "id": "demo002",
+      "nombre": "Remera oversize estampada",
+      "categoria": "Remeras",
+      "costoC": 960000,
+      "margen": 130,
+      "precioC": 2208000,
+      "talles": {
+        "S": 3,
+        "M": 5,
+        "L": 5,
+        "XL": 1
+      },
+      "activo": true,
+      "creadoPor": "Mica",
+      "creadoEl": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "id": "demo003",
+      "nombre": "Musculosa deportiva",
+      "categoria": "Remeras",
+      "costoC": 730000,
+      "margen": 140,
+      "precioC": 1752000,
+      "talles": {
+        "S": 7,
+        "M": 7,
+        "L": 6,
+        "XL": 1
+      },
+      "activo": true,
+      "creadoPor": "Mica",
+      "creadoEl": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "id": "demo004",
+      "nombre": "Buzo frisado con capucha",
+      "categoria": "Buzos",
+      "costoC": 1950000,
+      "margen": 110,
+      "precioC": 4095000,
+      "talles": {
+        "S": 0,
+        "M": 6,
+        "L": 6,
+        "XL": 0
+      },
+      "activo": true,
+      "creadoPor": "Mica",
+      "creadoEl": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "id": "demo005",
+      "nombre": "Buzo canguro liso",
+      "categoria": "Buzos",
+      "costoC": 1780000,
+      "margen": 115,
+      "precioC": 3827000,
+      "talles": {
+        "S": 0,
+        "M": 3,
+        "L": 0,
+        "XL": 0
+      },
+      "activo": true,
+      "creadoPor": "Mica",
+      "creadoEl": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "id": "demo006",
+      "nombre": "Jean recto elastizado",
+      "categoria": "Pantalones",
+      "costoC": 2450000,
+      "margen": 95,
+      "precioC": 4777500,
+      "talles": {
+        "38": 3,
+        "40": 5,
+        "42": 3,
+        "44": 2
+      },
+      "activo": true,
+      "creadoPor": "Mica",
+      "creadoEl": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "id": "demo007",
+      "nombre": "Pantalón cargo",
+      "categoria": "Pantalones",
+      "costoC": 2380000,
+      "margen": 98,
+      "precioC": 4712400,
+      "talles": {
+        "38": 0,
+        "40": 3,
+        "42": 2,
+        "44": 1
+      },
+      "activo": true,
+      "creadoPor": "Mica",
+      "creadoEl": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "id": "demo008",
+      "nombre": "Jogging de frisa",
+      "categoria": "Pantalones",
+      "costoC": 1620000,
+      "margen": 105,
+      "precioC": 3321000,
+      "talles": {
+        "S": 2,
+        "M": 7,
+        "L": 5,
+        "XL": 0
+      },
+      "activo": true,
+      "creadoPor": "Mica",
+      "creadoEl": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "id": "demo009",
+      "nombre": "Campera rompeviento",
+      "categoria": "Camperas",
+      "costoC": 3100000,
+      "margen": 90,
+      "precioC": 5890000,
+      "talles": {
+        "S": 1,
+        "M": 0,
+        "L": 2,
+        "XL": 2
+      },
+      "activo": true,
+      "creadoPor": "Mica",
+      "creadoEl": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "id": "demo00a",
+      "nombre": "Chaleco puffer",
+      "categoria": "Camperas",
+      "costoC": 2760000,
+      "margen": 95,
+      "precioC": 5382000,
+      "talles": {
+        "S": 0,
+        "M": 0,
+        "L": 0,
+        "XL": 0
+      },
+      "activo": true,
+      "creadoPor": "Mica",
+      "creadoEl": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "id": "demo00b",
+      "nombre": "Camisa de lino",
+      "categoria": "Camisas",
+      "costoC": 2150000,
+      "margen": 100,
+      "precioC": 4300000,
+      "talles": {
+        "S": 2,
+        "M": 4,
+        "L": 1,
+        "XL": 0
+      },
+      "activo": true,
+      "creadoPor": "Mica",
+      "creadoEl": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "id": "demo00c",
+      "nombre": "Short de baño",
+      "categoria": "Shorts",
+      "costoC": 1140000,
+      "margen": 125,
+      "precioC": 2565000,
+      "talles": {
+        "S": 5,
+        "M": 3,
+        "L": 2,
+        "XL": 3
+      },
+      "activo": true,
+      "creadoPor": "Mica",
+      "creadoEl": "2026-08-24T00:00:00.000Z"
+    }
+  ],
+  "ventas": [
+    {
+      "id": "demo00d",
+      "fecha": "2026-08-31T18:45:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "mercadopago",
+      "items": [
+        {
+          "productoId": "demo002",
+          "nombre": "Remera oversize estampada",
+          "talle": "XL",
+          "cant": 1,
+          "precioC": 2208000,
+          "costoC": 960000
+        },
+        {
+          "productoId": "demo00b",
+          "nombre": "Camisa de lino",
+          "talle": "XL",
+          "cant": 1,
+          "precioC": 4300000,
+          "costoC": 2150000
+        }
+      ],
+      "totalC": 6508000,
+      "gananciaC": 3398000
+    },
+    {
+      "id": "demo00e",
+      "fecha": "2026-08-31T14:50:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "mercadopago",
+      "items": [
+        {
+          "productoId": "demo007",
+          "nombre": "Pantalón cargo",
+          "talle": "44",
+          "cant": 1,
+          "precioC": 4712400,
+          "costoC": 2380000
+        },
+        {
+          "productoId": "demo007",
+          "nombre": "Pantalón cargo",
+          "talle": "38",
+          "cant": 1,
+          "precioC": 4712400,
+          "costoC": 2380000
+        }
+      ],
+      "totalC": 9424800,
+      "gananciaC": 4664800
+    },
+    {
+      "id": "demo00f",
+      "fecha": "2026-08-31T13:45:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "transferencia",
+      "items": [
+        {
+          "productoId": "demo00a",
+          "nombre": "Chaleco puffer",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 5382000,
+          "costoC": 2760000
+        },
+        {
+          "productoId": "demo007",
+          "nombre": "Pantalón cargo",
+          "talle": "38",
+          "cant": 1,
+          "precioC": 4712400,
+          "costoC": 2380000
+        }
+      ],
+      "totalC": 10094400,
+      "gananciaC": 4954400
+    },
+    {
+      "id": "demo00g",
+      "fecha": "2026-09-01T14:21:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo001",
+          "nombre": "Remera algodón peinado",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 1804000,
+          "costoC": 820000
+        },
+        {
+          "productoId": "demo00b",
+          "nombre": "Camisa de lino",
+          "talle": "L",
+          "cant": 1,
+          "precioC": 4300000,
+          "costoC": 2150000
+        }
+      ],
+      "totalC": 6104000,
+      "gananciaC": 3134000
+    },
+    {
+      "id": "demo00h",
+      "fecha": "2026-09-01T12:34:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo001",
+          "nombre": "Remera algodón peinado",
+          "talle": "S",
+          "cant": 1,
+          "precioC": 1804000,
+          "costoC": 820000
+        },
+        {
+          "productoId": "demo005",
+          "nombre": "Buzo canguro liso",
+          "talle": "XL",
+          "cant": 1,
+          "precioC": 3827000,
+          "costoC": 1780000
+        }
+      ],
+      "totalC": 5631000,
+      "gananciaC": 3031000
+    },
+    {
+      "id": "demo00i",
+      "fecha": "2026-09-01T11:52:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo00a",
+          "nombre": "Chaleco puffer",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 5382000,
+          "costoC": 2760000
+        }
+      ],
+      "totalC": 5382000,
+      "gananciaC": 2622000
+    },
+    {
+      "id": "demo00j",
+      "fecha": "2026-09-01T14:34:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "debito",
+      "items": [
+        {
+          "productoId": "demo00b",
+          "nombre": "Camisa de lino",
+          "talle": "L",
+          "cant": 1,
+          "precioC": 4300000,
+          "costoC": 2150000
+        }
+      ],
+      "totalC": 4300000,
+      "gananciaC": 2150000
+    },
+    {
+      "id": "demo00k",
+      "fecha": "2026-09-02T15:19:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "mercadopago",
+      "items": [
+        {
+          "productoId": "demo003",
+          "nombre": "Musculosa deportiva",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 1752000,
+          "costoC": 730000
+        }
+      ],
+      "totalC": 1752000,
+      "gananciaC": 1022000
+    },
+    {
+      "id": "demo00l",
+      "fecha": "2026-09-02T19:11:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo008",
+          "nombre": "Jogging de frisa",
+          "talle": "L",
+          "cant": 1,
+          "precioC": 3321000,
+          "costoC": 1620000
+        }
+      ],
+      "totalC": 3321000,
+      "gananciaC": 1701000
+    },
+    {
+      "id": "demo00m",
+      "fecha": "2026-09-02T11:46:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "transferencia",
+      "items": [
+        {
+          "productoId": "demo001",
+          "nombre": "Remera algodón peinado",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 1804000,
+          "costoC": 820000
+        }
+      ],
+      "totalC": 1804000,
+      "gananciaC": 984000
+    },
+    {
+      "id": "demo00n",
+      "fecha": "2026-09-03T11:49:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo005",
+          "nombre": "Buzo canguro liso",
+          "talle": "L",
+          "cant": 1,
+          "precioC": 3827000,
+          "costoC": 1780000
+        },
+        {
+          "productoId": "demo001",
+          "nombre": "Remera algodón peinado",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 1804000,
+          "costoC": 820000
+        }
+      ],
+      "totalC": 5631000,
+      "gananciaC": 3031000
+    },
+    {
+      "id": "demo00o",
+      "fecha": "2026-09-03T19:56:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "debito",
+      "items": [
+        {
+          "productoId": "demo004",
+          "nombre": "Buzo frisado con capucha",
+          "talle": "S",
+          "cant": 1,
+          "precioC": 4095000,
+          "costoC": 1950000
+        },
+        {
+          "productoId": "demo004",
+          "nombre": "Buzo frisado con capucha",
+          "talle": "XL",
+          "cant": 1,
+          "precioC": 4095000,
+          "costoC": 1950000
+        }
+      ],
+      "totalC": 8190000,
+      "gananciaC": 4290000
+    },
+    {
+      "id": "demo00p",
+      "fecha": "2026-09-03T11:29:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo00c",
+          "nombre": "Short de baño",
+          "talle": "L",
+          "cant": 1,
+          "precioC": 2565000,
+          "costoC": 1140000
+        },
+        {
+          "productoId": "demo002",
+          "nombre": "Remera oversize estampada",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 2208000,
+          "costoC": 960000
+        }
+      ],
+      "totalC": 4773000,
+      "gananciaC": 2673000
+    },
+    {
+      "id": "demo00q",
+      "fecha": "2026-09-03T10:22:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "mercadopago",
+      "items": [
+        {
+          "productoId": "demo00a",
+          "nombre": "Chaleco puffer",
+          "talle": "S",
+          "cant": 1,
+          "precioC": 5382000,
+          "costoC": 2760000
+        },
+        {
+          "productoId": "demo002",
+          "nombre": "Remera oversize estampada",
+          "talle": "S",
+          "cant": 1,
+          "precioC": 2208000,
+          "costoC": 960000
+        }
+      ],
+      "totalC": 7590000,
+      "gananciaC": 3870000
+    },
+    {
+      "id": "demo00r",
+      "fecha": "2026-09-04T11:38:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "debito",
+      "items": [
+        {
+          "productoId": "demo004",
+          "nombre": "Buzo frisado con capucha",
+          "talle": "S",
+          "cant": 1,
+          "precioC": 4095000,
+          "costoC": 1950000
+        },
+        {
+          "productoId": "demo004",
+          "nombre": "Buzo frisado con capucha",
+          "talle": "XL",
+          "cant": 1,
+          "precioC": 4095000,
+          "costoC": 1950000
+        }
+      ],
+      "totalC": 8190000,
+      "gananciaC": 4290000
+    },
+    {
+      "id": "demo00s",
+      "fecha": "2026-09-04T15:34:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo008",
+          "nombre": "Jogging de frisa",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 3321000,
+          "costoC": 1620000
+        },
+        {
+          "productoId": "demo005",
+          "nombre": "Buzo canguro liso",
+          "talle": "L",
+          "cant": 1,
+          "precioC": 3827000,
+          "costoC": 1780000
+        }
+      ],
+      "totalC": 7148000,
+      "gananciaC": 3748000
+    },
+    {
+      "id": "demo00t",
+      "fecha": "2026-09-05T17:06:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo009",
+          "nombre": "Campera rompeviento",
+          "talle": "L",
+          "cant": 1,
+          "precioC": 5890000,
+          "costoC": 3100000
+        },
+        {
+          "productoId": "demo004",
+          "nombre": "Buzo frisado con capucha",
+          "talle": "XL",
+          "cant": 1,
+          "precioC": 4095000,
+          "costoC": 1950000
+        }
+      ],
+      "totalC": 9985000,
+      "gananciaC": 4935000
+    },
+    {
+      "id": "demo00u",
+      "fecha": "2026-09-05T16:11:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "mercadopago",
+      "items": [
+        {
+          "productoId": "demo00a",
+          "nombre": "Chaleco puffer",
+          "talle": "L",
+          "cant": 1,
+          "precioC": 5382000,
+          "costoC": 2760000
+        },
+        {
+          "productoId": "demo009",
+          "nombre": "Campera rompeviento",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 5890000,
+          "costoC": 3100000
+        }
+      ],
+      "totalC": 11272000,
+      "gananciaC": 5412000
+    },
+    {
+      "id": "demo00v",
+      "fecha": "2026-09-05T13:29:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo006",
+          "nombre": "Jean recto elastizado",
+          "talle": "42",
+          "cant": 1,
+          "precioC": 4777500,
+          "costoC": 2450000
+        },
+        {
+          "productoId": "demo006",
+          "nombre": "Jean recto elastizado",
+          "talle": "42",
+          "cant": 1,
+          "precioC": 4777500,
+          "costoC": 2450000
+        }
+      ],
+      "totalC": 9555000,
+      "gananciaC": 4655000
+    },
+    {
+      "id": "demo00w",
+      "fecha": "2026-09-05T16:18:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo003",
+          "nombre": "Musculosa deportiva",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 1752000,
+          "costoC": 730000
+        }
+      ],
+      "totalC": 1752000,
+      "gananciaC": 1022000
+    },
+    {
+      "id": "demo00x",
+      "fecha": "2026-09-07T18:25:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "mercadopago",
+      "items": [
+        {
+          "productoId": "demo009",
+          "nombre": "Campera rompeviento",
+          "talle": "S",
+          "cant": 1,
+          "precioC": 5890000,
+          "costoC": 3100000
+        },
+        {
+          "productoId": "demo004",
+          "nombre": "Buzo frisado con capucha",
+          "talle": "S",
+          "cant": 1,
+          "precioC": 4095000,
+          "costoC": 1950000
+        }
+      ],
+      "totalC": 9985000,
+      "gananciaC": 4935000
+    },
+    {
+      "id": "demo00y",
+      "fecha": "2026-09-07T13:02:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "mercadopago",
+      "items": [
+        {
+          "productoId": "demo008",
+          "nombre": "Jogging de frisa",
+          "talle": "S",
+          "cant": 1,
+          "precioC": 3321000,
+          "costoC": 1620000
+        }
+      ],
+      "totalC": 3321000,
+      "gananciaC": 1701000
+    },
+    {
+      "id": "demo00z",
+      "fecha": "2026-09-07T19:08:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "mercadopago",
+      "items": [
+        {
+          "productoId": "demo007",
+          "nombre": "Pantalón cargo",
+          "talle": "40",
+          "cant": 1,
+          "precioC": 4712400,
+          "costoC": 2380000
+        }
+      ],
+      "totalC": 4712400,
+      "gananciaC": 2332400
+    },
+    {
+      "id": "demo010",
+      "fecha": "2026-09-07T19:23:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo00c",
+          "nombre": "Short de baño",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 2565000,
+          "costoC": 1140000
+        }
+      ],
+      "totalC": 2565000,
+      "gananciaC": 1425000
+    },
+    {
+      "id": "demo011",
+      "fecha": "2026-09-08T14:48:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo00c",
+          "nombre": "Short de baño",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 2565000,
+          "costoC": 1140000
+        }
+      ],
+      "totalC": 2565000,
+      "gananciaC": 1425000
+    },
+    {
+      "id": "demo012",
+      "fecha": "2026-09-09T14:22:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "mercadopago",
+      "items": [
+        {
+          "productoId": "demo00a",
+          "nombre": "Chaleco puffer",
+          "talle": "L",
+          "cant": 1,
+          "precioC": 5382000,
+          "costoC": 2760000
+        },
+        {
+          "productoId": "demo006",
+          "nombre": "Jean recto elastizado",
+          "talle": "44",
+          "cant": 1,
+          "precioC": 4777500,
+          "costoC": 2450000
+        }
+      ],
+      "totalC": 10159500,
+      "gananciaC": 4949500
+    },
+    {
+      "id": "demo013",
+      "fecha": "2026-09-10T12:29:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "debito",
+      "items": [
+        {
+          "productoId": "demo003",
+          "nombre": "Musculosa deportiva",
+          "talle": "S",
+          "cant": 1,
+          "precioC": 1752000,
+          "costoC": 730000
+        }
+      ],
+      "totalC": 1752000,
+      "gananciaC": 1022000
+    },
+    {
+      "id": "demo014",
+      "fecha": "2026-09-11T18:27:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "credito",
+      "items": [
+        {
+          "productoId": "demo00b",
+          "nombre": "Camisa de lino",
+          "talle": "L",
+          "cant": 1,
+          "precioC": 4300000,
+          "costoC": 2150000
+        },
+        {
+          "productoId": "demo005",
+          "nombre": "Buzo canguro liso",
+          "talle": "L",
+          "cant": 1,
+          "precioC": 3827000,
+          "costoC": 1780000
+        }
+      ],
+      "totalC": 8127000,
+      "gananciaC": 4197000
+    },
+    {
+      "id": "demo015",
+      "fecha": "2026-09-12T14:08:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo008",
+          "nombre": "Jogging de frisa",
+          "talle": "S",
+          "cant": 1,
+          "precioC": 3321000,
+          "costoC": 1620000
+        },
+        {
+          "productoId": "demo001",
+          "nombre": "Remera algodón peinado",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 1804000,
+          "costoC": 820000
+        }
+      ],
+      "totalC": 5125000,
+      "gananciaC": 2685000
+    },
+    {
+      "id": "demo016",
+      "fecha": "2026-09-12T16:45:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "mercadopago",
+      "items": [
+        {
+          "productoId": "demo009",
+          "nombre": "Campera rompeviento",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 5890000,
+          "costoC": 3100000
+        },
+        {
+          "productoId": "demo001",
+          "nombre": "Remera algodón peinado",
+          "talle": "S",
+          "cant": 1,
+          "precioC": 1804000,
+          "costoC": 820000
+        }
+      ],
+      "totalC": 7694000,
+      "gananciaC": 3774000
+    },
+    {
+      "id": "demo017",
+      "fecha": "2026-09-14T17:23:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "credito",
+      "items": [
+        {
+          "productoId": "demo007",
+          "nombre": "Pantalón cargo",
+          "talle": "42",
+          "cant": 1,
+          "precioC": 4712400,
+          "costoC": 2380000
+        }
+      ],
+      "totalC": 4712400,
+      "gananciaC": 2332400
+    },
+    {
+      "id": "demo018",
+      "fecha": "2026-09-14T10:28:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "credito",
+      "items": [
+        {
+          "productoId": "demo008",
+          "nombre": "Jogging de frisa",
+          "talle": "XL",
+          "cant": 1,
+          "precioC": 3321000,
+          "costoC": 1620000
+        }
+      ],
+      "totalC": 3321000,
+      "gananciaC": 1701000
+    },
+    {
+      "id": "demo019",
+      "fecha": "2026-09-15T17:19:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo005",
+          "nombre": "Buzo canguro liso",
+          "talle": "L",
+          "cant": 1,
+          "precioC": 3827000,
+          "costoC": 1780000
+        },
+        {
+          "productoId": "demo004",
+          "nombre": "Buzo frisado con capucha",
+          "talle": "XL",
+          "cant": 1,
+          "precioC": 4095000,
+          "costoC": 1950000
+        }
+      ],
+      "totalC": 7922000,
+      "gananciaC": 4192000
+    },
+    {
+      "id": "demo01a",
+      "fecha": "2026-09-15T16:18:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "mercadopago",
+      "items": [
+        {
+          "productoId": "demo00c",
+          "nombre": "Short de baño",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 2565000,
+          "costoC": 1140000
+        }
+      ],
+      "totalC": 2565000,
+      "gananciaC": 1425000
+    },
+    {
+      "id": "demo01b",
+      "fecha": "2026-09-15T11:05:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "mercadopago",
+      "items": [
+        {
+          "productoId": "demo006",
+          "nombre": "Jean recto elastizado",
+          "talle": "38",
+          "cant": 1,
+          "precioC": 4777500,
+          "costoC": 2450000
+        },
+        {
+          "productoId": "demo00a",
+          "nombre": "Chaleco puffer",
+          "talle": "XL",
+          "cant": 1,
+          "precioC": 5382000,
+          "costoC": 2760000
+        }
+      ],
+      "totalC": 10159500,
+      "gananciaC": 4949500
+    },
+    {
+      "id": "demo01c",
+      "fecha": "2026-09-16T19:32:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo001",
+          "nombre": "Remera algodón peinado",
+          "talle": "S",
+          "cant": 1,
+          "precioC": 1804000,
+          "costoC": 820000
+        }
+      ],
+      "totalC": 1804000,
+      "gananciaC": 984000
+    },
+    {
+      "id": "demo01d",
+      "fecha": "2026-09-16T12:45:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo001",
+          "nombre": "Remera algodón peinado",
+          "talle": "S",
+          "cant": 1,
+          "precioC": 1804000,
+          "costoC": 820000
+        },
+        {
+          "productoId": "demo00a",
+          "nombre": "Chaleco puffer",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 5382000,
+          "costoC": 2760000
+        }
+      ],
+      "totalC": 7186000,
+      "gananciaC": 3606000
+    },
+    {
+      "id": "demo01e",
+      "fecha": "2026-09-16T17:20:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "mercadopago",
+      "items": [
+        {
+          "productoId": "demo005",
+          "nombre": "Buzo canguro liso",
+          "talle": "S",
+          "cant": 1,
+          "precioC": 3827000,
+          "costoC": 1780000
+        },
+        {
+          "productoId": "demo007",
+          "nombre": "Pantalón cargo",
+          "talle": "42",
+          "cant": 1,
+          "precioC": 4712400,
+          "costoC": 2380000
+        }
+      ],
+      "totalC": 8539400,
+      "gananciaC": 4379400
+    },
+    {
+      "id": "demo01f",
+      "fecha": "2026-09-16T16:37:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "credito",
+      "items": [
+        {
+          "productoId": "demo00c",
+          "nombre": "Short de baño",
+          "talle": "L",
+          "cant": 1,
+          "precioC": 2565000,
+          "costoC": 1140000
+        },
+        {
+          "productoId": "demo00b",
+          "nombre": "Camisa de lino",
+          "talle": "S",
+          "cant": 1,
+          "precioC": 4300000,
+          "costoC": 2150000
+        }
+      ],
+      "totalC": 6865000,
+      "gananciaC": 3575000
+    },
+    {
+      "id": "demo01g",
+      "fecha": "2026-09-17T18:08:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "mercadopago",
+      "items": [
+        {
+          "productoId": "demo007",
+          "nombre": "Pantalón cargo",
+          "talle": "38",
+          "cant": 1,
+          "precioC": 4712400,
+          "costoC": 2380000
+        },
+        {
+          "productoId": "demo00b",
+          "nombre": "Camisa de lino",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 4300000,
+          "costoC": 2150000
+        }
+      ],
+      "totalC": 9012400,
+      "gananciaC": 4482400
+    },
+    {
+      "id": "demo01h",
+      "fecha": "2026-09-17T13:55:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo008",
+          "nombre": "Jogging de frisa",
+          "talle": "XL",
+          "cant": 1,
+          "precioC": 3321000,
+          "costoC": 1620000
+        }
+      ],
+      "totalC": 3321000,
+      "gananciaC": 1701000
+    },
+    {
+      "id": "demo01i",
+      "fecha": "2026-09-17T12:10:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "transferencia",
+      "items": [
+        {
+          "productoId": "demo008",
+          "nombre": "Jogging de frisa",
+          "talle": "S",
+          "cant": 1,
+          "precioC": 3321000,
+          "costoC": 1620000
+        },
+        {
+          "productoId": "demo001",
+          "nombre": "Remera algodón peinado",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 1804000,
+          "costoC": 820000
+        }
+      ],
+      "totalC": 5125000,
+      "gananciaC": 2685000
+    },
+    {
+      "id": "demo01j",
+      "fecha": "2026-09-18T12:07:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo00c",
+          "nombre": "Short de baño",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 2565000,
+          "costoC": 1140000
+        }
+      ],
+      "totalC": 2565000,
+      "gananciaC": 1425000
+    },
+    {
+      "id": "demo01k",
+      "fecha": "2026-09-19T17:24:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo009",
+          "nombre": "Campera rompeviento",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 5890000,
+          "costoC": 3100000
+        },
+        {
+          "productoId": "demo005",
+          "nombre": "Buzo canguro liso",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 3827000,
+          "costoC": 1780000
+        }
+      ],
+      "totalC": 9717000,
+      "gananciaC": 4837000
+    },
+    {
+      "id": "demo01l",
+      "fecha": "2026-09-21T14:18:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo009",
+          "nombre": "Campera rompeviento",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 5890000,
+          "costoC": 3100000
+        }
+      ],
+      "totalC": 5890000,
+      "gananciaC": 2790000
+    },
+    {
+      "id": "demo01m",
+      "fecha": "2026-09-21T19:15:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "transferencia",
+      "items": [
+        {
+          "productoId": "demo005",
+          "nombre": "Buzo canguro liso",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 3827000,
+          "costoC": 1780000
+        },
+        {
+          "productoId": "demo004",
+          "nombre": "Buzo frisado con capucha",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 4095000,
+          "costoC": 1950000
+        }
+      ],
+      "totalC": 7922000,
+      "gananciaC": 4192000
+    },
+    {
+      "id": "demo01n",
+      "fecha": "2026-09-21T14:36:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo007",
+          "nombre": "Pantalón cargo",
+          "talle": "40",
+          "cant": 1,
+          "precioC": 4712400,
+          "costoC": 2380000
+        }
+      ],
+      "totalC": 4712400,
+      "gananciaC": 2332400
+    },
+    {
+      "id": "demo01o",
+      "fecha": "2026-09-22T13:40:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo006",
+          "nombre": "Jean recto elastizado",
+          "talle": "40",
+          "cant": 1,
+          "precioC": 4777500,
+          "costoC": 2450000
+        }
+      ],
+      "totalC": 4777500,
+      "gananciaC": 2327500
+    },
+    {
+      "id": "demo01p",
+      "fecha": "2026-09-22T12:19:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "mercadopago",
+      "items": [
+        {
+          "productoId": "demo00c",
+          "nombre": "Short de baño",
+          "talle": "S",
+          "cant": 1,
+          "precioC": 2565000,
+          "costoC": 1140000
+        },
+        {
+          "productoId": "demo003",
+          "nombre": "Musculosa deportiva",
+          "talle": "XL",
+          "cant": 1,
+          "precioC": 1752000,
+          "costoC": 730000
+        }
+      ],
+      "totalC": 4317000,
+      "gananciaC": 2447000
+    },
+    {
+      "id": "demo01q",
+      "fecha": "2026-09-22T18:33:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "mercadopago",
+      "items": [
+        {
+          "productoId": "demo001",
+          "nombre": "Remera algodón peinado",
+          "talle": "L",
+          "cant": 1,
+          "precioC": 1804000,
+          "costoC": 820000
+        }
+      ],
+      "totalC": 1804000,
+      "gananciaC": 984000
+    },
+    {
+      "id": "demo01r",
+      "fecha": "2026-09-23T17:21:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "credito",
+      "items": [
+        {
+          "productoId": "demo005",
+          "nombre": "Buzo canguro liso",
+          "talle": "S",
+          "cant": 1,
+          "precioC": 3827000,
+          "costoC": 1780000
+        }
+      ],
+      "totalC": 3827000,
+      "gananciaC": 2047000
+    },
+    {
+      "id": "demo01s",
+      "fecha": "2026-09-23T14:26:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "efectivo",
+      "items": [
+        {
+          "productoId": "demo001",
+          "nombre": "Remera algodón peinado",
+          "talle": "S",
+          "cant": 1,
+          "precioC": 1804000,
+          "costoC": 820000
+        }
+      ],
+      "totalC": 1804000,
+      "gananciaC": 984000
+    },
+    {
+      "id": "demo01t",
+      "fecha": "2026-09-23T10:14:00.000Z",
+      "usuario": "Mica",
+      "medioPago": "mercadopago",
+      "items": [
+        {
+          "productoId": "demo00c",
+          "nombre": "Short de baño",
+          "talle": "L",
+          "cant": 1,
+          "precioC": 2565000,
+          "costoC": 1140000
+        },
+        {
+          "productoId": "demo001",
+          "nombre": "Remera algodón peinado",
+          "talle": "M",
+          "cant": 1,
+          "precioC": 1804000,
+          "costoC": 820000
+        }
+      ],
+      "totalC": 4369000,
+      "gananciaC": 2409000
+    }
+  ],
+  "movimientos": [
+    {
+      "id": "demo01u",
+      "fecha": "2026-09-21T12:00:00.000Z",
+      "tipo": "egreso",
+      "concepto": "Alquiler del local",
+      "montoC": 42000000,
+      "medioPago": "transferencia",
+      "usuario": "Mica"
+    },
+    {
+      "id": "demo01v",
+      "fecha": "2026-09-16T12:00:00.000Z",
+      "tipo": "egreso",
+      "concepto": "Luz y agua",
+      "montoC": 6800000,
+      "medioPago": "efectivo",
+      "usuario": "Mica"
+    },
+    {
+      "id": "demo01w",
+      "fecha": "2026-09-11T12:00:00.000Z",
+      "tipo": "egreso",
+      "concepto": "Bolsas y etiquetas",
+      "montoC": 3200000,
+      "medioPago": "efectivo",
+      "usuario": "Mica"
+    },
+    {
+      "id": "demo01x",
+      "fecha": "2026-09-06T12:00:00.000Z",
+      "tipo": "egreso",
+      "concepto": "Publicidad en redes",
+      "montoC": 4500000,
+      "medioPago": "transferencia",
+      "usuario": "Mica"
+    },
+    {
+      "id": "demo01y",
+      "fecha": "2026-09-01T12:00:00.000Z",
+      "tipo": "egreso",
+      "concepto": "Flete de mercadería",
+      "montoC": 5400000,
+      "medioPago": "mercadopago",
+      "usuario": "Mica"
+    },
+    {
+      "id": "demo01z",
+      "fecha": "2026-09-14T09:00:00.000Z",
+      "tipo": "ingreso",
+      "concepto": "Aporte de caja inicial",
+      "montoC": 15000000,
+      "medioPago": "efectivo",
+      "usuario": "Mica"
+    }
+  ],
+  "pedidos": [
+    {
+      "id": "demo020",
+      "fecha": "2026-09-19T11:00:00.000Z",
+      "usuario": "Mica",
+      "proveedor": "Distribuidora Sur",
+      "nota": "Entrega estimada en 10 días",
+      "estado": "pendiente",
+      "items": [
+        {
+          "productoId": "demo001",
+          "nombre": "Remera algodón peinado",
+          "talle": "S",
+          "cant": 5,
+          "costoC": 820000
+        },
+        {
+          "productoId": "demo002",
+          "nombre": "Remera oversize estampada",
+          "talle": "XL",
+          "cant": 5,
+          "costoC": 960000
+        },
+        {
+          "productoId": "demo003",
+          "nombre": "Musculosa deportiva",
+          "talle": "XL",
+          "cant": 5,
+          "costoC": 730000
+        },
+        {
+          "productoId": "demo004",
+          "nombre": "Buzo frisado con capucha",
+          "talle": "S",
+          "cant": 6,
+          "costoC": 1950000
+        },
+        {
+          "productoId": "demo004",
+          "nombre": "Buzo frisado con capucha",
+          "talle": "XL",
+          "cant": 6,
+          "costoC": 1950000
+        }
+      ]
+    }
+  ]
+}

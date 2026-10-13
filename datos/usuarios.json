@@ -1,0 +1,10 @@
+{
+  "_leeme": "La contraseña se guarda como SHA-256, no en texto plano. Para cambiarla: node herramientas/clave.mjs <nueva>",
+  "usuarios": [
+    {
+      "usuario": "mica",
+      "nombre": "Mica",
+      "clave": "58eb0dd988df36c54ae88fcf58afcd0a69944c335d82dfbe68094063f54f4363"
+    }
+  ]
+}

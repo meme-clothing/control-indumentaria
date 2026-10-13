@@ -1,0 +1,20 @@
+# Base de trabajo: son los datos reales del negocio, no van al repositorio.
+# La base de arranque que sí se versiona es datos/inicial.json
+datos/base-*.json
+datos/base-*.json.tmp
+
+# datos/firebase.json NO va acá a propósito.
+# La aplicación lo pide por fetch, así que tiene que estar publicado junto al
+# resto del sitio: si se ignora, en GitHub Pages nunca llega y la app cae al
+# modo prototipo sin decir por qué. No es secreto: las credenciales viajan
+# igual en el cliente y lo que protege la base son las Security Rules.
+# Cada repositorio de cliente lleva el suyo.
+
+# Respaldos descargados
+base-*.json
+
+node_modules/
+dist/
+.DS_Store
+Thumbs.db
+*.log

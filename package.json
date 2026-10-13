@@ -1,0 +1,28 @@
+{
+  "name": "meme-control",
+  "version": "3.0.0",
+  "description": "Control de stock, ventas y caja para Memé y Memé Kids",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node servidor/servidor.mjs",
+    "semilla": "node herramientas/semilla.mjs",
+    "demo": "node herramientas/construir.mjs",
+    "colisiones": "node herramientas/prueba-colisiones.mjs",
+    "pedidos": "node herramientas/prueba-pedidos.mjs",
+    "firebase": "node herramientas/prueba-firebase.mjs",
+    "diagnostico": "node herramientas/prueba-diagnostico.mjs",
+    "config": "node herramientas/firebase-config.mjs",
+    "config:verificar": "node herramientas/firebase-config.mjs --verificar",
+    "prueba:config": "node herramientas/prueba-config.mjs",
+    "prueba:perfil": "node herramientas/prueba-perfil.mjs",
+    "prueba:produccion": "node herramientas/prueba-produccion.mjs",
+    "prueba": "node herramientas/prueba-firebase.mjs && node herramientas/prueba-perfil.mjs && node herramientas/prueba-diagnostico.mjs && node herramientas/prueba-produccion.mjs && node herramientas/prueba-colisiones.mjs && node herramientas/prueba-pedidos.mjs && node herramientas/prueba-config.mjs && node herramientas/prueba-marca.mjs && node herramientas/prueba-negocios.mjs && node herramientas/prueba-flujo-negocios.mjs && node herramientas/prueba-precios.mjs",
+    "prueba:marca": "node herramientas/prueba-marca.mjs",
+    "prueba:negocios": "node herramientas/prueba-negocios.mjs",
+    "prueba:precios": "node herramientas/prueba-precios.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

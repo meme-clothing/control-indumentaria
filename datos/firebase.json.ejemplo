@@ -1,0 +1,9 @@
+{
+  "_leeme": "Copiá este archivo como datos/firebase.json y pegá los valores de tu proyecto. Estos datos son públicos por diseño: lo que protege la base son las Security Rules, no ocultar esto.",
+  "apiKey": "AIza...",
+  "authDomain": "TU-PROYECTO.firebaseapp.com",
+  "projectId": "TU-PROYECTO",
+  "storageBucket": "TU-PROYECTO.firebasestorage.app",
+  "messagingSenderId": "000000000000",
+  "appId": "1:000000000000:web:0000000000000000000000"
+}

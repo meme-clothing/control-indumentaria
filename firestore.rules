@@ -1,0 +1,89 @@
+rules_version = '2';
+
+/* --------------------------------------------------------------------------
+   SECURITY RULES
+
+   Esto es lo único que protege los datos. La configuración de Firebase viaja
+   en el código del cliente y es pública por diseño: cualquiera puede ver el
+   ID del proyecto. Lo que impide que lea o borre la base es este archivo.
+
+   Se publica con:  firebase deploy --only firestore:rules
+
+   Probalas antes de confiar en ellas:
+     firebase emulators:start --only firestore
+   -------------------------------------------------------------------------- */
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function entro() {
+      return request.auth != null;
+    }
+
+    /* El rol vive en el documento del usuario, no en el cliente.
+       Alguien podría alterar el programa que corre en su navegador; no puede
+       alterar lo que dice este documento, porque nadie salvo un administrador
+       puede escribirlo. */
+    function miPerfil() {
+      return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data;
+    }
+
+    function soyAdmin() {
+      return entro()
+        && exists(/databases/$(database)/documents/usuarios/$(request.auth.uid))
+        && miPerfil().rol == 'admin';
+    }
+
+    /* A qué emprendimientos puede entrar este usuario.
+       Un perfil sin la lista se toma como acceso a todos: así siguen entrando
+       los usuarios creados antes de que existiera más de un negocio. */
+    function entroAlNegocio(negocio) {
+      return entro()
+        && exists(/databases/$(database)/documents/usuarios/$(request.auth.uid))
+        && (!('negocios' in miPerfil()) || negocio in miPerfil().negocios);
+    }
+
+    /* ----------------------------------------------------------------------
+       USUARIOS
+       Cada uno lee su propio perfil, porque el programa necesita saber su rol
+       al entrar. Leer la lista completa y crear usuarios es solo de admin.
+
+       Nadie puede escribir su propio documento: si pudiera, se pondría
+       rol 'admin' solo y toda la separación de permisos sería decorativa.
+       ---------------------------------------------------------------------- */
+    match /usuarios/{uid} {
+      allow get: if entro() && (request.auth.uid == uid || soyAdmin());
+      allow list: if soyAdmin();
+      allow create, update, delete: if soyAdmin();
+    }
+
+    /* ----------------------------------------------------------------------
+       DATOS DE CADA EMPRENDIMIENTO
+
+       Cuelgan de negocios/{id}/… y solo entra quien tenga ese negocio en su
+       perfil. Esto es lo que impide que alguien con acceso a uno lea o escriba
+       en el otro: no alcanza con estar autenticado.
+
+       Dentro de un negocio no se separa vendedor de administrador: quien
+       atiende el mostrador necesita ver precios y registrar ventas.
+       ---------------------------------------------------------------------- */
+    match /negocios/{negocio}/{documento=**} {
+      allow read, write: if entroAlNegocio(negocio);
+    }
+
+    /* Colecciones de la versión anterior, cuando había un solo negocio.
+       Quedan en solo lectura para poder migrarlas; una vez movidos los datos,
+       borrá este bloque y las colecciones viejas. */
+    match /productos/{id}    { allow read: if entro(); allow write: if false; }
+    match /ventas/{id}       { allow read: if entro(); allow write: if false; }
+    match /movimientos/{id}  { allow read: if entro(); allow write: if false; }
+    match /pedidos/{id}      { allow read: if entro(); allow write: if false; }
+    match /config/{id}       { allow read: if entro(); allow write: if false; }
+
+    /* Todo lo que no esté nombrado arriba queda cerrado. Sin esta última
+       regla, una colección nueva creada más adelante nacería sin protección. */
+    match /{documento=**} {
+      allow read, write: if false;
+    }
+  }
+}
