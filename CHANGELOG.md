@@ -1,5 +1,26 @@
 # Historial de versiones
 
+## 3.2.0
+
+**Corregido un error grave de importación.** El importador tomaba como talle
+cualquier columna que no reconociera, así que una planilla con una columna
+`credito` o `efectivo` cargaba un talle con ese nombre y el precio como
+cantidad de stock: una remera de $18.040 entraba como 18.040 unidades. Ahora
+las columnas de precio por forma de cobro se reconocen y quedan fuera de la
+detección de talles.
+
+- La planilla acepta `precio` como alternativa a `costo` (con los dos, el
+  margen se deduce), `minimo` y `reponer` para el control de stock de cada
+  producto, y un precio por forma de cobro. Los nombres se reconocen con o sin
+  acentos, con o sin el prefijo `precio`, y en cualquier combinación de
+  mayúsculas.
+- **El importe a cobrar está siempre a la vista.** En pantalla chica el carrito
+  queda debajo del catálogo, así que mientras se cargaban productos el total no
+  se veía. Ahora hay una barra fija con el total, la forma de cobro y el botón
+  de confirmar.
+- **"Cuánto sale con cada forma de pago"** en el carrito: el total con cada
+  una, para responder sin deshacer nada.
+
 ## 3.1.1
 
 - El logo de Memé pasa a ser una lámina rectangular con el logotipo completo

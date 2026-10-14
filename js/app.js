@@ -113,7 +113,7 @@ document.addEventListener('click', ev => {
   const quitar = t.closest('[data-quitar]');
   if (quitar){ ui.carrito.splice(+quitar.dataset.quitar, 1); vistaVender(); return; }
   if (t.id === 'vaciar-carrito'){ ui.carrito = []; vistaVender(); return; }
-  if (t.id === 'cobrar'){ confirmarVenta(); return; }
+  if (t.id === 'cobrar' || t.id === 'cobrar-rapido'){ confirmarVenta(); return; }
 
   /* caja */
   if (t.id === 'nuevo-egreso'){ editorMovimiento('egreso'); return; }

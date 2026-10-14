@@ -5,6 +5,15 @@ import { claseTalle, vacio, buscador } from '../componentes.js';
 import { MEDIOS_PAGO, nombreMedio } from '../config.js';
 import { ui, bus, quienOpera } from '../estado.js';
 
+/* Cuánto saldría el carrito entero pagando de cada forma. Sirve para
+   responder "¿y con tarjeta cuánto es?" sin tocar nada. */
+function totalCon(medio){
+  return ui.carrito.reduce((a, i) => {
+    const p = datos.productos.find(x => x.id === i.productoId);
+    return a + (p ? precioPara(p, medio) : i.precioC) * i.cant;
+  }, 0);
+}
+
 export function vistaVender(){
   /* La forma de cobro va arriba, no en el carrito: cambia los precios de todo
      lo que está a la vista, así que tiene que elegirse antes de mirarlos. */
@@ -63,14 +72,35 @@ export function vistaVender(){
           <div class="total-fila"><span>Productos</span><span class="num">${unidades}</span></div>
           <div class="total-fila"><span>Ganancia de esta venta</span>
             <span class="num pos">${plata(total - costo)}</span></div>
-          <div class="total-fila grande"><span>Total</span><b class="num">${plata(total)}</b></div>
+          <div class="total-fila grande"><span>A cobrar</span><b class="num">${plata(total)}</b></div>
+
+          <details class="otros-totales">
+            <summary>Cuánto sale con cada forma de pago</summary>
+            <div class="otros-lista">
+              ${MEDIOS_PAGO.map(m => {
+                const t = totalCon(m.id);
+                return `<div class="${m.id === ui.medioPago ? 'actual' : ''}">
+                  <span>${esc(m.nombre)}</span><span class="num">${plata(t)}</span></div>`;
+              }).join('')}
+            </div>
+          </details>
 
           <button class="btn primario" id="cobrar" style="width:100%">Confirmar venta</button>
           <p class="carrito-firma">Queda registrada a nombre de ${esc(quienOpera())}</p>
         </div>`
       : vacio({ titulo:'Carrito vacío', texto:'Tocá el talle de un producto para sumarlo.' })}
     </aside>
-  </div>`;
+  </div>
+
+  ${ui.carrito.length ? `
+    <div class="barra-cobro">
+      <div>
+        <b class="num">${plata(total)}</b>
+        <small>${unidades} ${unidades === 1 ? 'producto' : 'productos'} ·
+          ${esc(nombreMedio(ui.medioPago))}</small>
+      </div>
+      <button class="btn primario" id="cobrar-rapido">Confirmar venta</button>
+    </div>` : ''}`;
 
   const sel = $('#medio-pago');
   if (sel) sel.onchange = e => { cambiarMedio(e.target.value); };

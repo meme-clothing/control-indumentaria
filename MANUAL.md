@@ -125,6 +125,16 @@ Abajo, antes de confirmar:
 Ver la ganancia antes de cerrar la venta permite decidir con información si se
 hace un descuento.
 
+### Cuánto cobrarle
+
+Mientras cargás productos, abajo de la pantalla queda siempre a la vista el
+**importe total**, cuántos productos son y con qué forma de cobro está
+calculado. Desde ahí mismo se confirma la venta.
+
+Y dentro del carrito, **"Cuánto sale con cada forma de pago"** despliega el
+total con cada una. Sirve para responder "¿y con tarjeta cuánto es?" sin tocar
+nada ni perder lo que ya cargaste.
+
 ### El precio cambia según cómo paguen
 
 Arriba, al lado del buscador, está **Cobro**. Al elegir una forma de pago,
@@ -227,18 +237,31 @@ La primera fila define las columnas.
 | Columna | Obligatoria | Qué es |
 |---|---|---|
 | `nombre` | Sí | Nombre del producto |
-| `costo` | Sí | Precio de costo por unidad |
+| `costo` | Una de las dos | Precio de costo por unidad |
+| `precio` | Una de las dos | Precio de venta en efectivo |
 | `categoria` | No | Rubro |
 | `margen` | No | Porcentaje de ganancia. Si falta, se usa 100 |
+| `minimo` | No | Cuándo avisar que ese producto se está por terminar |
+| `reponer` | No | Hasta cuántas unidades por talle sugerir al pedir |
+| `precio credito`, `precio debito`, `precio transferencia`, `precio mercadopago`, `precio efectivo` | No | Precio propio para esa forma de cobro |
+
+Con `costo` y `margen`, el precio se calcula. Con `costo` y `precio`, el margen
+se deduce. Con `precio` solo, el producto entra pero sin ganancia calculable.
+
+Las columnas de precio se escriben con o sin el prefijo `precio`, con o sin
+acentos, y en mayúsculas o minúsculas: `Precio_Crédito`, `credito` y
+`PRECIO TARJETA DE CREDITO` son lo mismo.
 
 **Cualquier otra columna se toma como un talle.** Por eso el mismo importador
 sirve con S/M/L/XL, con 38/40/42, o con la numeración que use el negocio, sin
-configurar nada.
+configurar nada. Las columnas de precio quedan excluidas de esa regla: si no,
+una columna llamada `credito` se cargaría como un talle con miles de unidades
+de stock.
 
 ```
-nombre	categoria	costo	margen	S	M	L	XL
-Remera lisa	Remeras	8200	120	6	9	7	3
-Buzo con capucha	Buzos	19500	110	3	7	6	4
+nombre	categoria	costo	margen	minimo	precio credito	S	M	L	XL
+Remera lisa	Remeras	8200	120	2	21000	6	9	7	3
+Buzo con capucha	Buzos	19500	110	3		3	7	6	4
 ```
 
 Acepta tabulaciones, que es lo que copia Excel, y también punto y coma. Los

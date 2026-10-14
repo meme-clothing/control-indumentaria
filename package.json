@@ -1,6 +1,6 @@
 {
   "name": "meme-control",
-  "version": "3.1.1",
+  "version": "3.2.0",
   "description": "Control de stock, ventas y caja para Memé y Memé Kids",
   "type": "module",
   "private": true,
@@ -17,10 +17,12 @@
     "prueba:config": "node herramientas/prueba-config.mjs",
     "prueba:perfil": "node herramientas/prueba-perfil.mjs",
     "prueba:produccion": "node herramientas/prueba-produccion.mjs",
-    "prueba": "node herramientas/prueba-firebase.mjs && node herramientas/prueba-perfil.mjs && node herramientas/prueba-diagnostico.mjs && node herramientas/prueba-produccion.mjs && node herramientas/prueba-colisiones.mjs && node herramientas/prueba-pedidos.mjs && node herramientas/prueba-config.mjs && node herramientas/prueba-marca.mjs && node herramientas/prueba-negocios.mjs && node herramientas/prueba-flujo-negocios.mjs && node herramientas/prueba-precios.mjs",
+    "prueba": "node herramientas/prueba-firebase.mjs && node herramientas/prueba-perfil.mjs && node herramientas/prueba-diagnostico.mjs && node herramientas/prueba-produccion.mjs && node herramientas/prueba-colisiones.mjs && node herramientas/prueba-pedidos.mjs && node herramientas/prueba-config.mjs && node herramientas/prueba-marca.mjs && node herramientas/prueba-negocios.mjs && node herramientas/prueba-flujo-negocios.mjs && node herramientas/prueba-precios.mjs && node herramientas/prueba-importacion.mjs && node herramientas/prueba-cobro.mjs",
     "prueba:marca": "node herramientas/prueba-marca.mjs",
     "prueba:negocios": "node herramientas/prueba-negocios.mjs",
-    "prueba:precios": "node herramientas/prueba-precios.mjs"
+    "prueba:precios": "node herramientas/prueba-precios.mjs",
+    "prueba:importacion": "node herramientas/prueba-importacion.mjs",
+    "prueba:cobro": "node herramientas/prueba-cobro.mjs"
   },
   "engines": {
     "node": ">=18"
