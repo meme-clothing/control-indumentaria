@@ -1,9 +1,19 @@
 import { $, esc, plata, plataCorta, fechaLarga, hora, dia, bajar, aCSV, avisar }
   from '../utilidades.js';
-import { rango, resumen, ranking, diasDe, porMedioPago, porUsuario } from '../negocio.js';
+import { rango, resumen, ranking, diasDe, porMedioPago, porUsuario, porColor, tonoDe, activos } from '../negocio.js';
 import { cifra, selectorRango, grafico, vacio } from '../componentes.js';
 import { nombreMedio } from '../config.js';
 import { ui } from '../estado.js';
+
+/* Solo las categorías que tienen al menos un artículo con colores: ofrecer
+   "Medias" cuando ninguna media tiene color sería ofrecer una pantalla vacía. */
+function categoriasConColor(){
+  const set = new Set();
+  activos().forEach(p => {
+    if (p.colores && Object.keys(p.colores).length && p.categoria) set.add(p.categoria);
+  });
+  return [...set].sort((a, b) => a.localeCompare(b, 'es'));
+}
 
 export function vistaInformes(){
   const r = rango(ui.rangoInforme);
@@ -65,6 +75,29 @@ export function vistaInformes(){
             </div>`).join('')
             : '<p style="color:var(--tinta-3);margin:0">Sin datos todavía.</p>'}
         </div>
+      </section>
+
+      <section class="tarjeta">
+        <div class="tarjeta-tope"><h3>Colores que más salen</h3>
+          <select id="inf-cat-color" style="margin-left:auto;width:auto;min-height:34px;font-size:13px">
+            <option value="todo">Todo el local</option>
+            ${categoriasConColor().map(c => `<option value="${esc(c)}"
+              ${ui.categoriaColor === c ? 'selected' : ''}>${esc(c)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="tarjeta-cuerpo">${(() => {
+          const lista = porColor(s.ventas, ui.categoriaColor || 'todo');
+          if (!lista.length) return `<p style="margin:0;color:var(--tinta-3);font-size:13.5px">
+            Todavía no hay ventas de artículos con color en este período.</p>`;
+          const tope = lista[0].unidades || 1;
+          return lista.map(c => `
+            <div class="barra-color">
+              <span class="etq"><span class="muestra" style="background:${tonoDe(c.color)}"></span>${esc(c.color)}</span>
+              <div class="riel"><div class="relleno"
+                style="width:${Math.round(c.unidades / tope * 100)}%;background:var(--marca)"></div></div>
+              <span class="val num">${c.unidades}</span>
+            </div>`).join('');
+        })()}</div>
       </section>
     </div>
 

@@ -14,7 +14,7 @@ import { entrar, restaurarSesion, salir, esAdmin, sesionActiva,
 
 import { vistaPanel }                                  from './vistas/panel.js';
 import { vistaProductos, editorProducto, dialogoIngresarPedido } from './vistas/productos.js';
-import { vistaVender, sumarAlCarrito, confirmarVenta } from './vistas/vender.js';
+import { vistaVender, sumarAlCarrito, confirmarVenta, abrirGrilla } from './vistas/vender.js';
 import { vistaImportar }                               from './vistas/importar.js';
 import { vistaPedidos, editorPedido, cancelarPedido }  from './vistas/pedidos.js';
 import { vistaCaja, editorMovimiento, deshacer, alternarDetalle } from './vistas/caja.js';
@@ -108,8 +108,13 @@ document.addEventListener('click', ev => {
   if (canPed){ cancelarPedido(canPed.dataset.cancelarPedido); return; }
 
   /* vender */
+  const grilla = t.closest('[data-grilla]');
+  if (grilla){ abrirGrilla(grilla.dataset.grilla); return; }
   const sumar = t.closest('[data-sumar]');
-  if (sumar && !sumar.disabled){ sumarAlCarrito(sumar.dataset.sumar, sumar.dataset.talle); return; }
+  if (sumar && !sumar.disabled){
+    sumarAlCarrito(sumar.dataset.sumar, sumar.dataset.talle, sumar.dataset.color || null);
+    return;
+  }
   const quitar = t.closest('[data-quitar]');
   if (quitar){ ui.carrito.splice(+quitar.dataset.quitar, 1); vistaVender(); return; }
   if (t.id === 'vaciar-carrito'){ ui.carrito = []; vistaVender(); return; }
@@ -143,6 +148,13 @@ document.addEventListener('click', ev => {
 /* Las dos fechas del rango libre. `change` y no `click`, por eso va aparte. */
 document.addEventListener('change', ev => {
   const t = ev.target;
+
+  if (t.id === 'inf-cat-color'){
+    ui.categoriaColor = t.value;
+    vistaInformes();
+    return;
+  }
+
   const mapa = [
     ['data-rango-caja-desde',    ui.rangoCaja,    'desde', vistaCaja],
     ['data-rango-caja-hasta',    ui.rangoCaja,    'hasta', vistaCaja],

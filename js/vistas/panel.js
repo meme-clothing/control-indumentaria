@@ -1,13 +1,13 @@
 import { $, esc, plataCorta } from '../utilidades.js';
 import { datos } from '../almacen.js';
 import { rango, resumen, activos, stockDe, valorStockCosto, valorStockVenta,
-         productosEnAlerta, tallesBajos, yaPedido } from '../negocio.js';
+         productosEnAlerta, tallesBajos, yaPedido, tonoDe } from '../negocio.js';
 import { cifra, talle, vacio } from '../componentes.js';
 
 /* Unidades de este producto que ya están pedidas y todavía no llegaron.
    Sin esto es fácil pedir dos veces lo mismo. */
 const enCamino = p =>
-  tallesBajos(p).reduce((a, [t]) => a + yaPedido(p.id, t), 0);
+  tallesBajos(p).reduce((a, v) => a + yaPedido(p.id, v.talle, v.color), 0);
 
 export function vistaPanel(){
   $('#acciones').innerHTML = '';
@@ -44,7 +44,11 @@ export function vistaPanel(){
                   <div class="prod-cat">${esc(p.categoria || 'Sin categoría')}</div></td>
               <td class="der">
                 <div class="talles" style="justify-content:flex-end">
-                  ${tallesBajos(p).map(([t, c]) => talle(t, c, p)).join('')}</div>
+                  ${tallesBajos(p).map(v => `
+                    <span class="talle ${v.cant === 0 ? 'cero' : 'bajo'}">
+                      <b>${v.cant}</b><small>${v.color
+                        ? `<span class="muestra chica" style="background:${tonoDe(v.color)}"></span>${esc(v.color)} ` : ''}${esc(v.talle)}</small>
+                    </span>`).join('')}</div>
                 ${enCamino(p) ? `<div class="ya-pedido">${enCamino(p)} en camino</div>` : ''}
               </td>
             </tr>`).join('')}

@@ -13,7 +13,7 @@ import { productosEnAlerta, pedidosPorEstado, activos, stockDe } from '../negoci
 import { disponible, porQueNo } from '../firebase.js';
 import { preferencia, aplicarTema } from '../tema.js';
 import { negociosPermitidos } from '../auth.js';
-import { VERSION, DESARROLLO, MEDIOS_PAGO } from '../config.js';
+import { VERSION, DESARROLLO, MEDIOS_PAGO, normalizarColor } from '../config.js';
 import { ui, bus } from '../estado.js';
 
 const CLAVE_RESPALDO = 'indumentaria.ultimo-respaldo';
@@ -143,6 +143,29 @@ export function vistaAjustes(){
       </section>
 
       <section class="tarjeta">
+        <div class="tarjeta-tope"><h3>Colores</h3></div>
+        <div class="tarjeta-cuerpo">
+          <p style="font-size:13.5px;color:var(--tinta-2);margin:0 0 13px;line-height:1.6">
+            Los colores se eligen de esta lista al cargar un producto, no se
+            escriben a mano. Si se escribieran, "negro" y "Negro" quedarían como
+            dos colores distintos y el informe de colores no serviría.</p>
+          <div class="lista-colores" id="lista-colores">
+            ${(datos.colores || []).map((c, ix) => `
+              <div class="color-fila">
+                <input type="color" data-tono="${ix}" value="${esc(c.tono)}" title="Cambiar el tono">
+                <input type="text" data-nombre-color="${ix}" value="${esc(c.nombre)}">
+                <button class="btn chico plano" data-quitar-color="${ix}"
+                  style="color:var(--tinta-3)">Quitar</button>
+              </div>`).join('')}
+          </div>
+          <div class="agregar-talle" style="margin-top:10px">
+            <input type="text" id="color-nuevo" placeholder="Agregar un color">
+            <button class="btn chico" id="color-mas">Agregar</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="tarjeta">
         <div class="tarjeta-tope"><h3>Respaldo</h3>
           ${dias === null || dias > 14
             ? '<span class="pastilla es-egreso" style="margin-left:auto">conviene hacerlo</span>' : ''}
@@ -213,6 +236,66 @@ export function vistaAjustes(){
       avisar('Recargo actualizado');
     };
   });
+
+  /* Quitar un color de la lista no lo borra de los productos que ya lo usan:
+     seguirían teniendo stock cargado con ese nombre y desaparecería de la
+     pantalla. Por eso se avisa y se bloquea. */
+  document.querySelectorAll('[data-quitar-color]').forEach(b => {
+    b.onclick = () => {
+      const ix = +b.dataset.quitarColor;
+      const nombre = datos.colores[ix].nombre;
+      const enUso = datos.productos.filter(p =>
+        p.colores && Object.keys(p.colores).some(c => normalizarColor(c) === normalizarColor(nombre)));
+      if (enUso.length){
+        avisar(`${nombre} está en uso en ${enUso.length} ${
+          enUso.length === 1 ? 'producto' : 'productos'}`, true);
+        return;
+      }
+      datos.colores.splice(ix, 1);
+      guardar(); bus.pintar(); avisar('Color quitado');
+    };
+  });
+
+  document.querySelectorAll('[data-tono]').forEach(campo => {
+    campo.onchange = e => {
+      datos.colores[+e.target.dataset.tono].tono = e.target.value;
+      guardar(); avisar('Tono actualizado');
+    };
+  });
+
+  document.querySelectorAll('[data-nombre-color]').forEach(campo => {
+    campo.onchange = e => {
+      const ix = +e.target.dataset.nombreColor;
+      const nuevo = e.target.value.trim();
+      if (!nuevo){ bus.pintar(); return; }
+      const viejo = datos.colores[ix].nombre;
+      /* Si el color ya está cargado en productos, se renombra también ahí: si
+         no, ese stock quedaría apuntando a un color que ya no existe. */
+      datos.productos.forEach(p => {
+        if (!p.colores) return;
+        Object.keys(p.colores).forEach(c => {
+          if (normalizarColor(c) === normalizarColor(viejo) && c !== nuevo){
+            p.colores[nuevo] = p.colores[c];
+            delete p.colores[c];
+          }
+        });
+      });
+      datos.colores[ix].nombre = nuevo;
+      guardar(); bus.pintar(); avisar('Color renombrado');
+    };
+  });
+
+  $('#color-mas').onclick = () => {
+    const nombre = $('#color-nuevo').value.trim();
+    if (!nombre) return;
+    if ((datos.colores || []).some(c => normalizarColor(c.nombre) === normalizarColor(nombre))){
+      avisar('Ese color ya está en la lista', true);
+      return;
+    }
+    datos.colores.push({ nombre, tono: '#9A9A9A' });
+    guardar(); bus.pintar();
+    avisar('Color agregado. Elegile el tono con el cuadrito.');
+  };
 
   $('#a-exportar').onclick = () => {
     bajar(`respaldo-${negocioActual().id}-${dia(hoyISO())}.json`, comoJSON(), 'application/json');

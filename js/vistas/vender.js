@@ -1,6 +1,7 @@
-import { $, esc, plata, nid, avisar, hoyISO } from '../utilidades.js';
+import { $, esc, plata, nid, avisar, hoyISO, dialogo, cerrarDialogo } from '../utilidades.js';
 import { datos, guardar } from '../almacen.js';
-import { buscar, conStock, precioPara, recargoDe } from '../negocio.js';
+import { buscar, conStock, precioPara, recargoDe, tieneColores, coloresDe,
+         tallesDe, cantidadDe, ajustarStock, tonoDe, umbralDe } from '../negocio.js';
 import { claseTalle, vacio, buscador } from '../componentes.js';
 import { MEDIOS_PAGO, nombreMedio } from '../config.js';
 import { ui, bus, quienOpera } from '../estado.js';
@@ -12,6 +13,56 @@ function totalCon(medio){
     const p = datos.productos.find(x => x.id === i.productoId);
     return a + (p ? precioPara(p, medio) : i.precioC) * i.cant;
   }, 0);
+}
+
+/* Con varios colores, la tarjeta muestra las muestras y al tocar cualquiera se
+   abre la grilla. No hay un orden impuesto entre color y talle: a veces la
+   clienta viene por el color y a veces por el talle, así que los dos ejes se
+   ven a la vez. */
+function tarjetaConColores(p){
+  const porColor = coloresDe(p).map(c => ({
+    color: c,
+    total: tallesDe(p).reduce((a, t) => a + cantidadDe(p, c, t), 0)
+  })).filter(x => x.total > 0);
+
+  if (!porColor.length) return '<div class="talles"><span class="sin-stock">Sin stock</span></div>';
+
+  return `<div class="colores-fila">${porColor.map(x => `
+    <button class="color-boton" data-grilla="${p.id}" data-color="${esc(x.color)}">
+      <span class="muestra" style="background:${tonoDe(x.color)}"></span>
+      ${esc(x.color)} <small>${x.total}</small>
+    </button>`).join('')}</div>`;
+}
+
+/* La grilla de color por talle. */
+export function abrirGrilla(productoId){
+  const p = datos.productos.find(x => x.id === productoId);
+  if (!p) return;
+  const talles = tallesDe(p);
+
+  dialogo({
+    titulo: p.nombre,
+    cuerpo: `
+      <div class="grilla-env">
+        <table class="grilla">
+          <thead><tr><th class="esquina">Color</th>
+            ${talles.map(t => `<th>${esc(t)}</th>`).join('')}</tr></thead>
+          <tbody>${coloresDe(p).map(c => `
+            <tr>
+              <td><span class="color"><span class="muestra grande"
+                style="background:${tonoDe(c)}"></span>${esc(c)}</span></td>
+              ${talles.map(t => {
+                const n = cantidadDe(p, c, t);
+                return `<td><button class="casilla ${n > 0 && n <= umbralDe(p) ? 'bajo' : ''}"
+                  ${n > 0 ? `data-sumar="${p.id}" data-talle="${esc(t)}" data-color="${esc(c)}"` : 'disabled'}
+                  >${n}</button></td>`;
+              }).join('')}
+            </tr>`).join('')}</tbody>
+        </table>
+      </div>
+      <p class="firma" style="margin-top:12px">Tocá la casilla del color y el talle que se lleva.</p>`,
+    pie: '<button class="btn" data-cerrar>Cerrar</button>'
+  });
 }
 
 export function vistaVender(){
@@ -39,11 +90,12 @@ export function vistaVender(){
         <div class="cat">${esc(p.categoria || 'Sin categoría')}</div>
         <div class="precio num">${plata(precioPara(p, ui.medioPago))}${
           recargoDe(ui.medioPago) ? `<small>+${recargoDe(ui.medioPago)}%</small>` : ''}</div>
-        <div class="talles">${conStock(p).map(([t, c]) => `
-          <button class="talle ${claseTalle(c, p)}"
-            data-sumar="${p.id}" data-talle="${esc(t)}" title="${c} en stock">
-            <b>${esc(t)}</b><small>${c}</small></button>`).join('')
-          || '<span class="sin-stock">Sin stock</span>'}</div>
+        ${tieneColores(p) ? tarjetaConColores(p) : `
+        <div class="talles">${conStock(p).map(v => `
+          <button class="talle ${claseTalle(v.cant, p)}"
+            data-sumar="${p.id}" data-talle="${esc(v.talle)}" title="${v.cant} en stock">
+            <b>${esc(v.talle)}</b><small>${v.cant}</small></button>`).join('')
+          || '<span class="sin-stock">Sin stock</span>'}</div>`}
       </div>`).join('')}</div>`
       : `<section class="tarjeta">${vacio({
           titulo:'No hay productos para vender',
@@ -59,9 +111,11 @@ export function vistaVender(){
       ${ui.carrito.length ? `
         <div class="carrito-lineas">${ui.carrito.map((i, ix) => `
           <div class="linea">
-            <div class="n">${esc(i.nombre)}</div>
+            <div class="n">${i.color ? `<span class="muestra"
+              style="background:${tonoDe(i.color)}"></span>` : ''}${esc(i.nombre)}</div>
             <div class="m num">${plata(i.precioC * i.cant)}</div>
-            <div class="d">Talle ${esc(i.talle)} · ${i.cant} × ${plata(i.precioC)}</div>
+            <div class="d">${i.color ? esc(i.color) + ' · ' : ''}talle ${esc(i.talle)} ·
+              ${i.cant} × ${plata(i.precioC)}</div>
             <button class="quitar" data-quitar="${ix}">Quitar</button>
           </div>`).join('')}</div>
 
@@ -127,23 +181,30 @@ export function cambiarMedio(medio){
   vistaVender();
 }
 
-export function sumarAlCarrito(productoId, talle){
+export function sumarAlCarrito(productoId, talle, color = null){
   const p = datos.productos.find(x => x.id === productoId);
   if (!p) return;
 
+  const hay = cantidadDe(p, color, talle);
   const yaPuesto = ui.carrito
-    .filter(i => i.productoId === productoId && i.talle === talle)
+    .filter(i => i.productoId === productoId && i.talle === talle && (i.color || null) === (color || null))
     .reduce((a, i) => a + i.cant, 0);
 
-  if (yaPuesto >= (p.talles[talle] || 0)){
-    avisar(`Solo quedan ${p.talles[talle]} en talle ${talle}`, true);
+  if (yaPuesto >= hay){
+    avisar(`Solo ${hay === 1 ? 'queda 1' : 'quedan ' + hay}` +
+           `${color ? ' en ' + color : ''} talle ${talle}`, true);
     return;
   }
 
-  const linea = ui.carrito.find(i => i.productoId === productoId && i.talle === talle);
+  const linea = ui.carrito.find(i =>
+    i.productoId === productoId && i.talle === talle && (i.color || null) === (color || null));
   if (linea) linea.cant++;
-  else ui.carrito.push({ productoId, nombre: p.nombre, talle, cant: 1,
+  else ui.carrito.push({ productoId, nombre: p.nombre, talle, color, cant: 1,
                          precioC: precioPara(p, ui.medioPago), costoC: p.costoC });
+
+  /* Si la grilla está abierta, se repinta con el stock ya descontado en la
+     cabeza de quien vende: así no suma de más sin darse cuenta. */
+  if ($('.grilla')) abrirGrilla(productoId);
   vistaVender();
 }
 
@@ -155,8 +216,7 @@ export function confirmarVenta(){
 
   ui.carrito.forEach(i => {
     const p = datos.productos.find(x => x.id === i.productoId);
-    if (p && p.talles[i.talle] !== undefined)
-      p.talles[i.talle] = Math.max(0, p.talles[i.talle] - i.cant);
+    if (p) ajustarStock(p, i.color || null, i.talle, -i.cant);
   });
 
   /* El precio, el costo y quién la hizo quedan congelados dentro de la venta.

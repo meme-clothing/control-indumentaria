@@ -13,7 +13,8 @@ import { $, $$, esc, plata, plataCorta, fechaLarga, nid, hoyISO,
          avisar, dialogo, cerrarDialogo, confirmar } from '../utilidades.js';
 import { datos, guardar } from '../almacen.js';
 import { pedidosPorEstado, totalPedido, unidadesPedido, sugerenciasDePedido,
-         activos, conStock } from '../negocio.js';
+         activos, conStock, tieneColores, coloresDe, tallesDe,
+         cantidadDe, tonoDe, variantes } from '../negocio.js';
 import { ESTADOS_PEDIDO } from '../config.js';
 import { vacio } from '../componentes.js';
 import { ui, bus, quienOpera } from '../estado.js';
@@ -83,7 +84,9 @@ function tarjetaPedido(p){
     <div class="pedido-items">
       ${p.items.map(i => `<div class="pedido-item">
         <span class="pi-nombre">${esc(i.nombre)}</span>
-        <span class="pi-talle">talle ${esc(i.talle)}</span>
+        <span class="pi-talle">${i.color
+          ? `<span class="muestra chica" style="background:${tonoDe(i.color)}"></span>${esc(i.color)} · ` : ''
+          }talle ${esc(i.talle)}</span>
         <span class="pi-cant num">${i.cant} u.</span>
         <span class="pi-costo num">${plata(i.cant * (i.costoC || 0))}</span>
       </div>`).join('')}
@@ -135,6 +138,8 @@ export function editorPedido(id){
                 <option value="">Elegí un producto</option>
                 ${activos().map(x => `<option value="${x.id}">${esc(x.nombre)}</option>`).join('')}
               </select></label>
+            <label id="pd-caja-color" hidden><span>Color</span>
+              <select id="pd-color"></select></label>
             <label><span>Talle</span><select id="pd-talle"></select></label>
             <label><span>Cantidad</span>
               <input type="number" id="pd-cant" value="1" min="1"></label>
@@ -159,6 +164,7 @@ export function editorPedido(id){
       cargarTalles();
 
       $('#pd-producto').onchange = cargarTalles;
+      $('#pd-color').onchange = cargarTalles;
       $('#pd-mas').onclick = agregarLinea;
       $('#pd-sugerir').onclick = sugerir;
 
@@ -183,10 +189,28 @@ function cargarTalles(){
   const id = $('#pd-producto').value;
   const prod = datos.productos.find(x => x.id === id);
   const sel = $('#pd-talle');
-  if (!prod){ sel.innerHTML = '<option value="">—</option>'; return; }
+  const cajaColor = $('#pd-caja-color');
+  const selColor = $('#pd-color');
+
+  if (!prod){
+    sel.innerHTML = '<option value="">—</option>';
+    cajaColor.hidden = true;
+    return;
+  }
+
+  /* El selector de color solo aparece si el artículo tiene colores. */
+  cajaColor.hidden = !tieneColores(prod);
+  if (tieneColores(prod)){
+    const actual = selColor.value;
+    const lista = coloresDe(prod);
+    selColor.innerHTML = lista
+      .map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+    if (lista.includes(actual)) selColor.value = actual;
+  }
+
   /* Acá van TODOS los talles, no solo los que tienen stock: justamente se
      pide lo que se agotó. */
-  sel.innerHTML = Object.keys(prod.talles || {})
+  sel.innerHTML = tallesDe(prod)
     .map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join('')
     || '<option value="">Sin talles</option>';
 }
@@ -195,14 +219,17 @@ function agregarLinea(){
   const id = $('#pd-producto').value;
   const prod = datos.productos.find(x => x.id === id);
   const talle = $('#pd-talle').value;
+  const color = (prod && tieneColores(prod)) ? $('#pd-color').value : null;
   const cant = Math.max(1, parseInt($('#pd-cant').value) || 1);
 
   if (!prod){ avisar('Elegí un producto', true); return; }
   if (!talle){ avisar('Ese producto no tiene talles cargados', true); return; }
 
-  const ya = lineas.find(l => l.productoId === prod.id && l.talle === talle);
+  const ya = lineas.find(l => l.productoId === prod.id && l.talle === talle
+                           && (l.color || null) === (color || null));
   if (ya) ya.cant += cant;
-  else lineas.push({ productoId: prod.id, nombre: prod.nombre, talle, cant, costoC: prod.costoC });
+  else lineas.push({ productoId: prod.id, nombre: prod.nombre, talle,
+                     color: color || null, cant, costoC: prod.costoC });
 
   $('#pd-cant').value = 1;
   pintarLineas();
@@ -234,7 +261,9 @@ function pintarLineas(){
     ? `<div class="pd-tabla">
         ${lineas.map((l, ix) => `
           <div class="pd-linea">
-            <span class="pd-nombre">${esc(l.nombre)}<small>talle ${esc(l.talle)}</small></span>
+            <span class="pd-nombre">${esc(l.nombre)}<small>${l.color
+              ? `<span class="muestra chica" style="background:${tonoDe(l.color)}"></span>${esc(l.color)} · ` : ''
+              }talle ${esc(l.talle)}</small></span>
             <input type="number" data-linea-cant="${ix}" value="${l.cant}" min="1">
             <span class="pd-sub num">${plata(l.cant * (l.costoC || 0))}</span>
             <button class="btn chico plano" data-quitar-linea="${ix}"

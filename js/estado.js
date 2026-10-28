@@ -10,6 +10,7 @@ const primeroDelMes = () => {
 };
 
 export const ui = {
+  categoriaColor: 'todo',
   vista: 'panel',
   busqueda: '',
 

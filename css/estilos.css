@@ -1071,3 +1071,97 @@ tbody tr:hover{ background:var(--superficie-2) }
   padding:3px 8px; border-radius:6px;
 }
 .otros-lista .actual{ background:var(--marca-suave); color:var(--tinta); font-weight:600 }
+
+/* ==========================================================================
+   COLORES
+
+   El círculo de color se reconoce más rápido que leer la palabra, que es lo
+   que importa en el mostrador. El nombre va igual al lado, porque hay tonos
+   que a simple vista se confunden y porque no todo el mundo distingue colores
+   de la misma manera.
+   ========================================================================== */
+.muestra{
+  width:15px; height:15px; border-radius:50%; flex:none;
+  display:inline-block; vertical-align:-2px;
+  border:1px solid color-mix(in srgb, var(--tinta) 25%, transparent);
+}
+.muestra.grande{ width:19px; height:19px }
+.muestra.chica{ width:9px; height:9px; vertical-align:0; margin-right:3px }
+
+/* Muestras de color en la tarjeta de un producto, en la pantalla de venta. */
+.colores-fila{ display:flex; gap:6px; margin-top:9px; flex-wrap:wrap }
+.color-boton{
+  display:flex; align-items:center; gap:6px;
+  padding:5px 10px 5px 6px; border-radius:999px;
+  border:1px solid var(--linea-2); background:var(--superficie-2);
+  font-size:12.5px; font-weight:500; color:var(--tinta-2); cursor:pointer;
+}
+.color-boton:hover{ border-color:var(--marca); color:var(--tinta) }
+.color-boton small{ color:var(--tinta-3); font-size:11.5px }
+
+/* Grilla de color por talle. No impone un orden entre los dos ejes: la
+   clienta a veces viene por el color y a veces por el talle. */
+.grilla-env{ overflow-x:auto; margin:0 -4px; padding:0 4px }
+.grilla{ width:100%; border-collapse:separate; border-spacing:4px }
+.grilla th{
+  background:none; border:0; padding:3px 0; position:static;
+  font-size:11.5px; font-weight:600; color:var(--tinta-3);
+  text-align:center; text-transform:uppercase; letter-spacing:.03em;
+}
+.grilla th.esquina{ text-align:left; padding-left:2px }
+.grilla td{ border:0; padding:0 }
+.grilla .color{
+  display:flex; align-items:center; gap:8px;
+  font-size:13.5px; font-weight:500; white-space:nowrap; padding-right:8px;
+}
+.casilla{
+  width:100%; min-width:48px; min-height:48px;
+  border-radius:var(--r-ch); border:1px solid var(--linea-2);
+  background:var(--superficie); color:var(--tinta);
+  font-size:15px; font-weight:600; cursor:pointer;
+  transition:border-color .12s, background .12s, transform .08s;
+}
+.casilla:hover:not(:disabled){ border-color:var(--marca); background:var(--marca-suave) }
+.casilla:active:not(:disabled){ transform:scale(.96) }
+.casilla.bajo{ background:var(--alerta-suave); border-color:var(--alerta-linea); color:var(--alerta) }
+.casilla:disabled{
+  background:var(--superficie); border-style:dashed; color:var(--tinta-3);
+  cursor:not-allowed; font-weight:400;
+}
+
+/* Bloque de talles de un color, en la ficha del producto. */
+.bloque-color{
+  border:1px solid var(--linea); border-radius:var(--r-ch);
+  padding:12px 13px; margin-bottom:10px; background:var(--superficie-2);
+}
+.bloque-tope{ display:flex; align-items:center; gap:9px; margin-bottom:10px }
+.bloque-tope b{ font-size:14px }
+.bloque-tope .quitar{
+  margin-left:auto; font-size:12px; color:var(--tinta-3);
+  background:none; border:0; cursor:pointer; padding:3px 2px;
+}
+.bloque-tope .quitar:hover{ color:var(--egreso) }
+
+/* Lista de colores del negocio, en Ajustes. */
+.lista-colores{ display:grid; gap:7px }
+.color-fila{ display:flex; align-items:center; gap:9px }
+.color-fila input[type="color"]{
+  width:40px; height:36px; flex:none; padding:2px;
+  border:1px solid var(--linea-2); border-radius:var(--r-ch);
+  background:var(--superficie); cursor:pointer;
+}
+.color-fila input[type="text"]{ flex:1; min-width:0; min-height:36px }
+
+/* Barras del informe de colores. */
+.barra-color{ display:flex; align-items:center; gap:11px; margin-bottom:9px }
+.barra-color:last-child{ margin-bottom:0 }
+.barra-color .etq{ width:118px; flex:none; display:flex; align-items:center; gap:8px; font-size:13.5px }
+.barra-color .riel{ flex:1; height:22px; background:var(--superficie-2); border-radius:5px; overflow:hidden }
+.barra-color .relleno{ height:100%; border-radius:5px }
+.barra-color .val{ width:44px; text-align:right; font-size:13.5px; font-weight:600 }
+
+@media (max-width:620px){
+  .casilla{ min-width:42px; min-height:44px; font-size:14px }
+  .grilla .color{ font-size:12.5px; padding-right:4px }
+  .barra-color .etq{ width:94px; font-size:12.5px }
+}

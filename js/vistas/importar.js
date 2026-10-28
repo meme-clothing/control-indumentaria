@@ -1,13 +1,14 @@
 import { $, esc, plata, aCentavos, nid, avisar } from '../utilidades.js';
 import { datos, guardar } from '../almacen.js';
-import { precioDe } from '../negocio.js';
+import { precioDe, colorCanonico, tonoDe } from '../negocio.js';
 import { MEDIOS_PAGO } from '../config.js';
 import { ui, bus } from '../estado.js';
 
 const EJEMPLO =
-`nombre\tcategoria\tcosto\tmargen\tminimo\tprecio credito\tS\tM\tL\tXL
-Remera lisa\tRemeras\t8200\t120\t2\t21000\t6\t9\t7\t3
-Buzo con capucha\tBuzos\t19500\t110\t3\t\t3\t7\t6\t4`;
+`nombre\tcategoria\tcolor\tcosto\tmargen\tminimo\tprecio credito\tS\tM\tL\tXL
+Remera lisa\tRemeras\tNegro\t8200\t120\t2\t21000\t6\t9\t7\t3
+Remera lisa\tRemeras\tBlanco\t8200\t120\t2\t21000\t2\t3\t0\t1
+Buzo con capucha\tBuzos\t\t19500\t110\t3\t\t3\t7\t6\t4`;
 
 /* Excel copia con tabulaciones. Algunos exportadores usan punto y coma. */
 const separar = linea =>
@@ -31,6 +32,7 @@ const ES_MARGEN = /^(margen|ganancia|%|porcentaje)$/;
 const ES_PRECIO = /^(precio|precio venta|precio de venta|precio base|venta)$/;
 const ES_UMBRAL = /^(minimo|minimo de stock|avisar en|umbral)$/;
 const ES_REPONER= /^(reponer|reponer hasta|reposicion)$/;
+const ES_COLOR  = /^(color|colores|tono)$/;
 
 /* Columnas de precio por forma de cobro. Se aceptan tanto "precio credito"
    como "credito" a secas, y tanto el identificador como el nombre que se
@@ -66,6 +68,10 @@ export function vistaImportar(){
         <div class="modelo">
           <p style="margin:0 0 7px">Primera fila: los nombres de las columnas.
           Hace falta <code>nombre</code>, y además <code>costo</code> o <code>precio</code>.</p>
+          <p style="margin:0 0 7px">Para artículos de varios colores, una columna
+          <code>color</code> y <b>una fila por color</b>: la misma remera repetida,
+          una vez por cada color, con sus talles al lado. Al importar se juntan en
+          un solo artículo.</p>
           <p style="margin:0 0 7px">Opcionales: <code>categoria</code>,
           <code>margen</code>, <code>minimo</code>, <code>reponer</code>, y un precio por
           forma de cobro: <code>precio efectivo</code>, <code>precio credito</code>,
@@ -115,6 +121,7 @@ export function revisarPegado(){
   const iMargen  = cabecera.findIndex(c => ES_MARGEN.test(c));
   const iUmbral  = cabecera.findIndex(c => ES_UMBRAL.test(c));
   const iReponer = cabecera.findIndex(c => ES_REPONER.test(c));
+  const iColor   = cabecera.findIndex(c => ES_COLOR.test(c));
 
   /* Columnas de precio por forma de cobro */
   const columnasPrecio = [];
@@ -123,7 +130,7 @@ export function revisarPegado(){
     if (medio && i !== iPrecio) columnasPrecio.push({ i, medio, titulo: originales[i] });
   });
 
-  const conocidas = new Set([iNombre, iCosto, iCat, iMargen, iPrecio, iUmbral, iReponer]
+  const conocidas = new Set([iNombre, iCosto, iCat, iMargen, iPrecio, iUmbral, iReponer, iColor]
     .filter(i => i >= 0)
     .concat(columnasPrecio.map(o => o.i)));
 
@@ -179,6 +186,7 @@ export function revisarPegado(){
     };
 
     filas.push({
+      color: iColor >= 0 ? (colorCanonico(celdas[iColor]) || null) : null,
       nombre,
       categoria: iCat >= 0 ? (celdas[iCat] || '').trim() : '',
       costoC, margen, precioC, talles,
@@ -192,6 +200,7 @@ export function revisarPegado(){
 
   ui.previo = {
     filas,
+    traeColor: iColor >= 0,
     talles: columnasTalle.map(o => o.c),
     precios: columnasPrecio.map(o => ({ medio: o.medio, titulo: o.titulo })),
     traeCosto: iCosto >= 0,
@@ -221,13 +230,15 @@ function mostrarPrevio(){
         Talles: ${ui.previo.talles.map(esc).join(' · ') || 'ninguno'}${
           ui.previo.precios.length
             ? ` · Precios: ${ui.previo.precios.map(x => esc(x.titulo)).join(' · ')}` : ''}${
+          ui.previo.traeColor ? ' · con colores' : ''}${
           ui.previo.traeMinimos ? ' · con mínimos de stock' : ''}</span>
       <button class="btn primario chico" id="confirmar-import" style="margin-left:auto"
         ${buenas.length ? '' : 'disabled'}>Importar ${buenas.length}</button>
     </div>
     <div class="tabla-env"><table class="previo">
       <thead><tr>
-        <th>Producto</th><th>Categoría</th><th class="der">Costo</th>
+        <th>Producto</th><th>Categoría</th>${ui.previo.traeColor ? '<th>Color</th>' : ''}
+        <th class="der">Costo</th>
         <th class="der">Margen</th><th class="der">Precio</th>
         ${ui.previo.precios.map(x => `<th class="der">${esc(x.titulo)}</th>`).join('')}
         ${ui.previo.talles.map(t => `<th class="der">${esc(t)}</th>`).join('')}
@@ -237,6 +248,9 @@ function mostrarPrevio(){
           <td>${esc(f.nombre)}${f.problema ? ` <small>· ${esc(f.problema)} (fila ${f.fila})</small>` : ''}</td>
           <td style="color:var(--tinta-2)">${esc(f.categoria) || '—'}</td>
           <td class="der num">${plata(f.costoC)}</td>
+          ${ui.previo.traeColor ? `<td>${f.color
+            ? `<span class="muestra chica" style="background:${tonoDe(f.color)}"></span>${esc(f.color)}`
+            : '<span style="color:var(--tinta-3)">—</span>'}</td>` : ''}
           <td class="der num">${f.costoC ? f.margen + '%' : '—'}</td>
           <td class="der num" style="font-weight:600">${plata(f.precioC)}</td>
           ${ui.previo.precios.map(x => `<td class="der num">${
@@ -252,6 +266,31 @@ function mostrarPrevio(){
   if (btn) btn.onclick = () => aplicarImportacion(buenas);
 }
 
+/* Suma las cantidades de una fila al producto, en la rama que corresponda.
+
+   Si la fila trae color y el producto venía sin colores, lo que tenía pasa a
+   ese color: así no se pierde lo que ya estaba cargado cuando se empieza a
+   usar colores en un artículo que no los tenía. */
+function volcarStock(p, f){
+  const color = f.color || null;
+
+  if (color && !p.colores && Object.values(p.talles || {}).some(c => c > 0)){
+    p.colores = { [color]: { ...p.talles } };
+    p.talles = {};
+  }
+
+  if (color){
+    if (!p.colores) p.colores = {};
+    if (!p.colores[color]) p.colores[color] = {};
+    Object.entries(f.talles).forEach(([t, c]) =>
+      p.colores[color][t] = (p.colores[color][t] || 0) + c);
+  } else {
+    if (!p.talles) p.talles = {};
+    Object.entries(f.talles).forEach(([t, c]) =>
+      p.talles[t] = (p.talles[t] || 0) + c);
+  }
+}
+
 function aplicarImportacion(buenas){
   let nuevos = 0, actualizados = 0;
 
@@ -260,9 +299,13 @@ function aplicarImportacion(buenas){
       p.activo !== false && p.nombre.toLowerCase() === f.nombre.toLowerCase());
 
     if (existente){
-      /* El stock se suma: importar dos veces la misma remesa no la pisa, la acumula. */
-      Object.entries(f.talles).forEach(([t, c]) =>
-        existente.talles[t] = (existente.talles[t] || 0) + c);
+      /* El stock se suma: importar dos veces la misma remesa no la pisa, la
+         acumula. Con color, se suma dentro del color que corresponda.
+
+         Y acá se juntan las filas del mismo artículo: tres filas de la misma
+         remera, una por color, terminan en UN producto con tres colores, no en
+         tres productos distintos. */
+      volcarStock(existente, f);
       existente.costoC = f.costoC;
       existente.margen = f.margen;
       existente.precioC = f.precioC;
@@ -273,7 +316,8 @@ function aplicarImportacion(buenas){
     } else {
       const p = { id: nid(), nombre: f.nombre, categoria: f.categoria,
                   costoC: f.costoC, margen: f.margen, precioC: f.precioC,
-                  talles: { ...f.talles }, activo: true };
+                  talles: {}, activo: true };
+      volcarStock(p, f);
       if (f.precios) p.precios = { ...f.precios };
       if (f.umbral !== undefined) p.umbral = f.umbral;
       if (f.reponerHasta !== undefined) p.reponerHasta = f.reponerHasta;

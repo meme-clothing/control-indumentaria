@@ -1,5 +1,33 @@
 # Historial de versiones
 
+## 3.3.0
+
+Colores por talle.
+
+- Un artículo puede venir en varios colores, y cada color tiene sus propios
+  talles. Los artículos de un solo color **no cambian en nada**: siguen con los
+  talles a la vista y se venden de un toque.
+- Al vender, un artículo con colores abre una grilla de colores por talles y se
+  toca la casilla. No hay un orden impuesto entre color y talle, porque a veces
+  la clienta viene por el color y a veces por el talle.
+- El color queda guardado en la venta, en el pedido y en el aviso de reponer.
+  "Faltan remeras talle M" no alcanza para hacer el pedido al proveedor.
+- **Informe nuevo**: qué colores salen más, con filtro por categoría.
+- La planilla acepta una columna `color` con una fila por color. Las filas del
+  mismo artículo se juntan en un solo producto con varios colores, no en varios
+  productos.
+- Los colores salen de una lista por negocio, editable en Ajustes, con su tono
+  para dibujar el círculo. No se escriben a mano: si se escribieran, "negro" y
+  "Negro" quedarían como dos colores distintos y el informe no serviría.
+  Renombrar un color lo renombra también en los productos que ya lo usan, y no
+  se puede quitar uno que esté en uso.
+- El precio, el costo y el margen son del artículo, no del color.
+
+**Nota técnica.** El color va anidado (`colores: { Negro: { S: 4 } }`) y no como
+una clave `Negro/M`. Este negocio vende medias 3/4: con un separador, el
+programa no podría saber dónde termina el color y dónde empieza el talle. Hay
+una prueba dedicada a ese caso.
+
 ## 3.2.0
 
 **Corregido un error grave de importación.** El importador tomaba como talle

@@ -12,7 +12,7 @@
 import { $, esc, plata, plataCorta, hora, nombreDia, dia, nid, aCentavos, fechaLarga,
          avisar, dialogo, cerrarDialogo } from '../utilidades.js';
 import { datos, guardar } from '../almacen.js';
-import { rango, resumen } from '../negocio.js';
+import { rango, resumen, ajustarStock, tonoDe } from '../negocio.js';
 import { cifra, selectorRango, vacio } from '../componentes.js';
 import { MEDIOS_PAGO, MEDIO_POR_DEFECTO, nombreMedio } from '../config.js';
 import { ui, bus, quienOpera } from '../estado.js';
@@ -96,7 +96,7 @@ function tituloVenta(v){
   const unidades = v.items.reduce((a, i) => a + i.cant, 0);
   if (v.items.length === 1){
     const i = v.items[0];
-    return `${i.cant}× ${i.nombre} · talle ${i.talle}`;
+    return `${i.cant}× ${i.nombre} · ${i.color ? i.color + ' · ' : ''}talle ${i.talle}`;
   }
   return `Venta de ${unidades} productos`;
 }
@@ -141,7 +141,8 @@ function filaMov(f){
     ${f.items && f.items.length > 1 ? `
       <div class="mov-detalle" id="det-${f.id}" hidden>
         ${f.items.map(i => `<div>
-          <span>${i.cant}× ${esc(i.nombre)} · talle ${esc(i.talle)}</span>
+          <span>${i.color ? `<span class="muestra" style="background:${tonoDe(i.color)}"></span> ` : ''}${
+            i.cant}× ${esc(i.nombre)} · ${i.color ? esc(i.color) + ' · ' : ''}talle ${esc(i.talle)}</span>
           <span class="num">${plata(i.precioC * i.cant)}</span></div>`).join('')}
       </div>` : ''}
   </div>`;
@@ -204,7 +205,7 @@ export function deshacer(id, clase){
     /* Deshacer una venta devuelve la mercadería al stock. */
     v.items.forEach(i => {
       const p = datos.productos.find(x => x.id === i.productoId);
-      if (p && p.talles[i.talle] !== undefined) p.talles[i.talle] += i.cant;
+      if (p) ajustarStock(p, i.color || null, i.talle, i.cant);
     });
     datos.ventas = datos.ventas.filter(x => x.id !== id);
     avisar('Venta deshecha, el stock volvió a su lugar');

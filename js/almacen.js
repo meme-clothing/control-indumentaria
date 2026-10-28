@@ -15,7 +15,7 @@
    -------------------------------------------------------------------------- */
 
 import { RUTAS, CLAVE_LOCAL, UMBRAL_POR_DEFECTO, REPONER_HASTA_POR_DEFECTO,
-         VENTANA_DIAS, RECARGOS_POR_DEFECTO } from './config.js';
+         VENTANA_DIAS, RECARGOS_POR_DEFECTO, COLORES_POR_DEFECTO } from './config.js';
 import { disponible, conexion } from './firebase.js';
 import { NEGOCIO_POR_DEFECTO, esNegocioValido, buscarNegocio } from './negocios.js';
 import { avisar } from './utilidades.js';
@@ -31,6 +31,7 @@ const VACIA = () => ({
   umbral: UMBRAL_POR_DEFECTO,
   reponerHasta: REPONER_HASTA_POR_DEFECTO,
   recargos: { ...RECARGOS_POR_DEFECTO },
+  colores: COLORES_POR_DEFECTO.map(c => ({ ...c })),
   productos: [], ventas: [], movimientos: [], pedidos: []
 });
 
@@ -45,6 +46,9 @@ function conArreglos(d){
      función no los trae, y una forma de cobro nueva tampoco. */
   r.recargos = Object.assign({ ...RECARGOS_POR_DEFECTO },
     (r.recargos && typeof r.recargos === 'object') ? r.recargos : {});
+  /* Una base guardada antes de los colores no los trae. */
+  if (!Array.isArray(r.colores) || !r.colores.length)
+    r.colores = COLORES_POR_DEFECTO.map(c => ({ ...c }));
   return r;
 }
 
@@ -160,6 +164,7 @@ async function cargarDeFirestore(){
       if (typeof c.reponerHasta === 'number') datos.reponerHasta = c.reponerHasta;
       if (c.recargos && typeof c.recargos === 'object')
         datos.recargos = Object.assign({ ...RECARGOS_POR_DEFECTO }, c.recargos);
+      if (Array.isArray(c.colores) && c.colores.length) datos.colores = c.colores;
     }
 
     await Promise.all([
@@ -239,7 +244,7 @@ function tomarFoto(){
     foto[col] = new Map(datos[col].map(x => [x.id, JSON.stringify(x)]));
   });
   foto.config = JSON.stringify({ umbral: datos.umbral, reponerHasta: datos.reponerHasta,
-                                 recargos: datos.recargos });
+                                 recargos: datos.recargos, colores: datos.colores });
 }
 
 /* Después de traer historial viejo: entra a la foto sin marcar nada como nuevo. */
@@ -319,7 +324,7 @@ async function sincronizarFirestore(){
     }
 
     const cfg = JSON.stringify({ umbral: datos.umbral, reponerHasta: datos.reponerHasta,
-                                 recargos: datos.recargos });
+                                 recargos: datos.recargos, colores: datos.colores });
     if (cfg !== foto.config)
       await escribir(documentoDe(db, api, 'config', 'general'), JSON.parse(cfg));
 

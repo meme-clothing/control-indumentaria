@@ -50,7 +50,7 @@ export const VENTANA_DIAS = 90;
    La versión también está en package.json; el script de construcción avisa si
    se desincronizan.
    -------------------------------------------------------------------------- */
-export const VERSION = '3.2.0';
+export const VERSION = '3.3.0';
 
 export const DESARROLLO = {
   por: 'Migue',
@@ -107,6 +107,35 @@ export const MEDIO_POR_DEFECTO = 'efectivo';
 
    Se configura desde Ajustes y queda guardado con el resto de la base, así que
    esto es solo el punto de partida de una instalación nueva. */
+/* --------------------------------------------------------------------------
+   COLORES
+
+   Lista de arranque de una instalación nueva. Después se edita desde Ajustes
+   y queda guardada con el resto de la base, por negocio.
+
+   Los colores se eligen de una lista y no se escriben a mano en cada
+   producto: si se escribieran, "negro", "Negro" y "NEGRO" quedarían como tres
+   colores distintos y el informe de colores no serviría para nada.
+
+   El `tono` es solo para dibujar el círculo en pantalla. No tiene que ser
+   exacto: tiene que ser reconocible de un vistazo.
+   -------------------------------------------------------------------------- */
+export const COLORES_POR_DEFECTO = [
+  { nombre: 'Negro',   tono: '#1C1C1C' },
+  { nombre: 'Blanco',  tono: '#F4F1EA' },
+  { nombre: 'Beige',   tono: '#D8C7AC' },
+  { nombre: 'Rosa',    tono: '#D8A0B4' },
+  { nombre: 'Celeste', tono: '#9BBBD4' },
+  { nombre: 'Verde',   tono: '#7E8B5A' },
+  { nombre: 'Azul',    tono: '#3F5478' },
+  { nombre: 'Rojo',    tono: '#A8382F' }
+];
+
+/* Para comparar nombres sin que molesten mayúsculas ni acentos. */
+export const normalizarColor = n => String(n || '')
+  .trim().toLowerCase()
+  .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
 export const RECARGOS_POR_DEFECTO = {
   efectivo: 0,
   transferencia: 0,

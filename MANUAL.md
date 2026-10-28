@@ -125,6 +125,18 @@ Abajo, antes de confirmar:
 Ver la ganancia antes de cerrar la venta permite decidir con información si se
 hace un descuento.
 
+### Artículos con varios colores
+
+Los artículos de un solo color se venden como siempre: tocás el talle y listo.
+
+Los que vienen en varios muestran las muestras de color en la tarjeta. Al tocar
+cualquiera se abre una grilla con los colores en las filas y los talles en las
+columnas: tocás la casilla que corresponda. Da lo mismo si pensaste primero el
+color o primero el talle.
+
+El número de cada casilla es lo que queda en stock. En amarillo, lo que está por
+terminarse; punteado, lo agotado, que no se puede tocar.
+
 ### Cuánto cobrarle
 
 Mientras cargás productos, abajo de la pantalla queda siempre a la vista el
@@ -196,6 +208,9 @@ el botón está apagado.
 - **Nombre** y **Categoría**. La categoría sugiere las que ya existen.
 - **Costo por unidad** y **Margen de venta**. Debajo se ve el **precio de venta
   calculado**, que se actualiza mientras se escribe.
+- **Stock**: si el artículo viene en varios colores, se agrega cada uno y se
+  cargan sus talles por separado. Al agregar el primer color, lo que estaba
+  cargado sin color pasa a ser de ese color, para no perderlo.
 - **Control de stock**: cuándo avisar que un talle se está por terminar, y
   hasta cuántas unidades reponer al sugerir un pedido. Cada producto tiene el
   suyo: no se rotan igual una remera básica y una campera.
@@ -482,6 +497,19 @@ cambia con el botón de la barra lateral.
 Arriba de todo: en qué emprendimiento estás, con qué usuario, y los botones
 para cambiar de emprendimiento y cerrar sesión. Están acá además de en la barra
 lateral porque desde el celular esa barra se reduce a los iconos de abajo.
+
+### Colores
+
+La lista de colores del negocio. Cada uno con su nombre y su tono, que es el
+círculo que se ve en la pantalla de venta.
+
+Los colores se eligen de esta lista al cargar un producto, no se escriben a
+mano: si se escribieran, "negro" y "Negro" quedarían como dos colores distintos
+y el informe de colores no serviría.
+
+Si renombrás un color, se renombra también en todos los productos que lo usan.
+Y no se puede quitar uno que esté en uso: el sistema avisa en cuántos productos
+está.
 
 ### Recargo por forma de cobro
 

@@ -1,7 +1,7 @@
 /* Cálculos puros sobre la base. No tocan el DOM ni guardan nada. */
 
 import { datos } from './almacen.js';
-import { UMBRAL_POR_DEFECTO, REPONER_HASTA_POR_DEFECTO } from './config.js';
+import { UMBRAL_POR_DEFECTO, REPONER_HASTA_POR_DEFECTO, normalizarColor } from './config.js';
 
 /* Cada producto define cuándo avisar y hasta cuánto reponer. Los que no lo
    tengan cargado usan el valor por defecto, así una base vieja no queda sin
@@ -14,24 +14,107 @@ export const reponerHastaDe = p =>
     ? Number(p.reponerHasta) : REPONER_HASTA_POR_DEFECTO;
 
 export const precioDe = p => Math.round(p.costoC * (1 + p.margen / 100));
-export const stockDe  = p => Object.values(p.talles || {}).reduce((a, b) => a + (b || 0), 0);
+
+/* ==========================================================================
+   STOCK: TALLES, Y OPCIONALMENTE COLORES
+
+   Un producto guarda su stock de una de dos formas:
+
+     sin color:  talles:  { S: 4, M: 7 }
+     con color:  colores: { Negro: { S: 4, M: 6 }, Blanco: { M: 3 } }
+
+   Las dos conviven a propósito. La mayoría de los artículos viene en un solo
+   color, y obligarlos a tener un color inventado complicaría la carga y la
+   venta sin ganar nada.
+
+   Y el color va anidado, no en una clave tipo "Negro/M". Este negocio vende
+   medias 3/4: con un separador, el programa no podría saber dónde termina el
+   color y dónde empieza el talle.
+
+   Todo lo que sigue en el programa pasa por estas funciones en lugar de mirar
+   `talles` o `colores` directamente. Así la diferencia entre los dos casos
+   vive en un solo archivo.
+   ========================================================================== */
+
+export const tieneColores = p =>
+  !!(p && p.colores && Object.keys(p.colores).length);
+
+export const coloresDe = p => tieneColores(p) ? Object.keys(p.colores) : [];
+
+/* Todos los talles del producto, sin repetir y en el orden en que aparecen. */
+export function tallesDe(p){
+  if (!tieneColores(p)) return Object.keys(p.talles || {});
+  const vistos = [];
+  Object.values(p.colores).forEach(porTalle =>
+    Object.keys(porTalle || {}).forEach(t => { if (!vistos.includes(t)) vistos.push(t); }));
+  return vistos;
+}
+
+/* Cada combinacion del producto: { color, talle, cant }. Sin colores, `color`
+   es null, y el resto del programa lo trata igual. */
+export function variantes(p){
+  if (!tieneColores(p))
+    return Object.entries(p.talles || {}).map(([talle, cant]) => ({ color: null, talle, cant: cant || 0 }));
+  const salida = [];
+  Object.entries(p.colores).forEach(([color, porTalle]) =>
+    Object.entries(porTalle || {}).forEach(([talle, cant]) =>
+      salida.push({ color, talle, cant: cant || 0 })));
+  return salida;
+}
+
+export const cantidadDe = (p, color, talle) => {
+  if (!p) return 0;
+  const v = color ? ((p.colores || {})[color] || {})[talle] : (p.talles || {})[talle];
+  return Number(v) || 0;
+};
+
+/* Suma o resta unidades de una combinacion. Es el unico lugar del programa que
+   escribe stock, asi que aca se concentra el cuidado de no dejar negativos. */
+export function ajustarStock(p, color, talle, delta){
+  if (!p || !talle) return;
+  if (color){
+    if (!p.colores) p.colores = {};
+    if (!p.colores[color]) p.colores[color] = {};
+    p.colores[color][talle] = Math.max(0, (Number(p.colores[color][talle]) || 0) + delta);
+  } else {
+    if (!p.talles) p.talles = {};
+    p.talles[talle] = Math.max(0, (Number(p.talles[talle]) || 0) + delta);
+  }
+}
+
+export const stockDe = p => variantes(p).reduce((a, v) => a + v.cant, 0);
+
+/* Las combinaciones con unidades. Es lo que se ofrece al vender. */
+export const conStock = p => variantes(p).filter(v => v.cant > 0);
 
 export const valorStockCosto = p => stockDe(p) * p.costoC;
 export const valorStockVenta = p => stockDe(p) * p.precioC;
 
 export const activos = () => datos.productos.filter(p => p.activo !== false);
 
-/* Los talles que todavía tienen unidades. Las listas de productos y la
-   pantalla de venta muestran solo estos: un talle en cero no se puede vender
-   y llena la fila de ruido. Para reponerlo está el editor del producto, que
-   sigue mostrando todos. */
-export function conStock(p){
-  return Object.entries(p.talles || {}).filter(([, c]) => c > 0);
+/* El tono con el que se dibuja el circulo del color. */
+export function tonoDe(nombre){
+  if (!nombre) return null;
+  const n = normalizarColor(nombre);
+  const c = (datos.colores || []).find(x => normalizarColor(x.nombre) === n);
+  return c ? c.tono : '#9A9A9A';
 }
 
+/* El nombre tal como esta escrito en la lista del negocio, para que no entren
+   tres variantes de "negro" por diferencias de tipeo. */
+export function colorCanonico(nombre){
+  if (!nombre) return null;
+  const n = normalizarColor(nombre);
+  const c = (datos.colores || []).find(x => normalizarColor(x.nombre) === n);
+  return c ? c.nombre : String(nombre).trim();
+}
+
+/* Las combinaciones que llegaron al minimo del producto. Devuelve objetos y no
+   pares, porque con color hace falta saber cual: "faltan remeras talle M" no
+   alcanza para hacer el pedido al proveedor. */
 export function tallesBajos(p){
   const u = umbralDe(p);
-  return Object.entries(p.talles || {}).filter(([, c]) => c <= u);
+  return variantes(p).filter(v => v.cant <= u);
 }
 
 export function productosEnAlerta(){
@@ -41,8 +124,9 @@ export function productosEnAlerta(){
 export function buscar(texto){
   const q = (texto || '').trim().toLowerCase();
   let lista = activos();
+  /* Se busca tambien por color: escribir "negro" trae lo que viene en negro. */
   if (q) lista = lista.filter(p =>
-    (p.nombre + ' ' + (p.categoria || '')).toLowerCase().includes(q));
+    (p.nombre + ' ' + (p.categoria || '') + ' ' + coloresDe(p).join(' ')).toLowerCase().includes(q));
   return lista.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
 }
 
@@ -168,6 +252,25 @@ export function porUsuario(ventas){
   return Object.values(mapa).sort((a, b) => b.totalC - a.totalC);
 }
 
+/* Que colores salieron mas, opcionalmente dentro de una categoria.
+   Es el dato que sirve para decidir la compra. */
+export function porColor(ventas, categoria){
+  const mapa = {};
+  ventas.forEach(v => v.items.forEach(i => {
+    if (!i.color) return;
+    if (categoria && categoria !== 'todo'){
+      const p = datos.productos.find(x => x.id === i.productoId);
+      const cat = (p && p.categoria) || i.categoria || '';
+      if (cat !== categoria) return;
+    }
+    const k = colorCanonico(i.color);
+    mapa[k] = mapa[k] || { color: k, unidades: 0, totalC: 0 };
+    mapa[k].unidades += i.cant;
+    mapa[k].totalC += i.precioC * i.cant;
+  }));
+  return Object.values(mapa).sort((a, b) => b.unidades - a.unidades);
+}
+
 /* Ranking de productos y de talles dentro de un conjunto de ventas. */
 export function ranking(ventas){
   const porProducto = {};
@@ -200,11 +303,12 @@ export const unidadesPedido = p => p.items.reduce((a, i) => a + i.cant, 0);
 
 /* Cuántas unidades de un talle ya están pedidas y todavía no llegaron.
    Sirve para no volver a pedir lo mismo dos veces. */
-export function yaPedido(productoId, talle){
+export function yaPedido(productoId, talle, color = null){
   return datos.pedidos
     .filter(p => p.estado === 'pendiente')
     .reduce((a, p) => a + p.items
-      .filter(i => i.productoId === productoId && i.talle === talle)
+      .filter(i => i.productoId === productoId && i.talle === talle
+                && (i.color || null) === (color || null))
       .reduce((x, i) => x + i.cant, 0), 0);
 }
 
@@ -215,10 +319,10 @@ export function sugerenciasDePedido(){
   const lineas = [];
   activos().forEach(p => {
     const meta = reponerHastaDe(p);
-    tallesBajos(p).forEach(([t, c]) => {
-      const falta = meta - c - yaPedido(p.id, t);
+    tallesBajos(p).forEach(v => {
+      const falta = meta - v.cant - yaPedido(p.id, v.talle, v.color);
       if (falta > 0) lineas.push({
-        productoId: p.id, nombre: p.nombre, talle: t,
+        productoId: p.id, nombre: p.nombre, talle: v.talle, color: v.color,
         cant: falta, costoC: p.costoC
       });
     });
@@ -250,7 +354,7 @@ export function cambiosDeCosto(ids){
 
 /* Suma al stock lo que traen los pedidos y los marca recibidos.
    `usuario` llega por parámetro: los cálculos no conocen la interfaz. */
-export function recibirPedidos(ids, { actualizarCostos, usuario }){
+export function recibirPedidos(ids, { actualizarCostos, usuario } = {}){
   const cuando = new Date().toISOString();
   let unidades = 0, recibidos = 0;
 
@@ -261,7 +365,7 @@ export function recibirPedidos(ids, { actualizarCostos, usuario }){
     ped.items.forEach(i => {
       const p = datos.productos.find(x => x.id === i.productoId);
       if (!p) return;
-      p.talles[i.talle] = (p.talles[i.talle] || 0) + i.cant;
+      ajustarStock(p, i.color || null, i.talle, i.cant);
       unidades += i.cant;
       if (actualizarCostos && i.costoC && i.costoC !== p.costoC){
         p.costoC = i.costoC;
