@@ -208,6 +208,13 @@ el botón está apagado.
 - **Nombre** y **Categoría**. La categoría sugiere las que ya existen.
 - **Costo por unidad** y **Margen de venta**. Debajo se ve el **precio de venta
   calculado**, que se actualiza mientras se escribe.
+**Eliminar.** El botón está abajo a la izquierda y pide confirmación: dice qué
+artículo es y cuántas unidades tiene. El artículo sale de las listas, pero las
+ventas y los pedidos anteriores no se tocan.
+
+- **Talles**: las pastillas de arriba dicen qué talles usa este artículo. Se
+  agregan desde la lista del negocio y se sacan con la × de cada pastilla. Si el
+  talle tiene unidades cargadas, pregunta antes de sacarlo.
 - **Stock**: si el artículo viene en varios colores, se agrega cada uno y se
   cargan sus talles por separado. Al agregar el primer color, lo que estaba
   cargado sin color pasa a ser de ese color, para no perderlo.
@@ -497,6 +504,18 @@ cambia con el botón de la barra lateral.
 Arriba de todo: en qué emprendimiento estás, con qué usuario, y los botones
 para cambiar de emprendimiento y cerrar sesión. Están acá además de en la barra
 lateral porque desde el celular esa barra se reduce a los iconos de abajo.
+
+### Talles
+
+Los talles que usa el negocio, **en el orden en que querés verlos**. Ese orden
+manda en todas las pantallas: en la ficha, en la grilla de venta, en la tabla de
+productos y en los informes.
+
+Con las flechas se cambia el orden. Si renombrás un talle, se renombra también
+en todos los productos que lo usan. Y no se puede quitar uno que esté en uso: el
+sistema avisa en cuántos productos está.
+
+Cada artículo usa los talles que necesite, no todos. Eso se elige en su ficha.
 
 ### Colores
 

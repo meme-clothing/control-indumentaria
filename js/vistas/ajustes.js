@@ -143,6 +143,34 @@ export function vistaAjustes(){
       </section>
 
       <section class="tarjeta">
+        <div class="tarjeta-tope"><h3>Talles</h3></div>
+        <div class="tarjeta-cuerpo">
+          <p style="font-size:13.5px;color:var(--tinta-2);margin:0 0 13px;line-height:1.6">
+            Los talles que usa el negocio, en el orden en que querés verlos.
+            Ese orden manda en todas las pantallas: sin él, una remera podría
+            mostrar XL antes que M. Cada artículo usa los que necesite, no
+            todos.</p>
+          <div class="lista-talles" id="lista-talles">
+            ${(datos.talles || []).map((t, ix) => `
+              <div class="talle-fila">
+                <span class="talle-orden">${ix + 1}</span>
+                <input type="text" data-nombre-talle="${ix}" value="${esc(t)}">
+                <button class="btn chico plano" data-subir-talle="${ix}"
+                  ${ix === 0 ? 'disabled' : ''} title="Subir">↑</button>
+                <button class="btn chico plano" data-bajar-talle="${ix}"
+                  ${ix === datos.talles.length - 1 ? 'disabled' : ''} title="Bajar">↓</button>
+                <button class="btn chico plano" data-quitar-talle="${ix}"
+                  style="color:var(--tinta-3)">Quitar</button>
+              </div>`).join('')}
+          </div>
+          <div class="agregar-talle" style="margin-top:10px">
+            <input type="text" id="talle-nuevo" placeholder="Agregar un talle (XXL, 46, Único…)">
+            <button class="btn chico" id="talle-mas">Agregar</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="tarjeta">
         <div class="tarjeta-tope"><h3>Colores</h3></div>
         <div class="tarjeta-cuerpo">
           <p style="font-size:13.5px;color:var(--tinta-2);margin:0 0 13px;line-height:1.6">
@@ -236,6 +264,77 @@ export function vistaAjustes(){
       avisar('Recargo actualizado');
     };
   });
+
+  /* ---- talles ---- */
+
+  /* Cuántos productos tienen stock cargado en ese talle. Si lo quitamos de la
+     lista, ese stock seguiría existiendo pero sin columna donde mostrarse. */
+  const productosConTalle = t => datos.productos.filter(p => {
+    const fuentes = p.colores ? Object.values(p.colores) : [p.talles || {}];
+    return fuentes.some(o => (o || {})[t] !== undefined);
+  });
+
+  document.querySelectorAll('[data-quitar-talle]').forEach(b => {
+    b.onclick = () => {
+      const ix = +b.dataset.quitarTalle;
+      const t = datos.talles[ix];
+      const enUso = productosConTalle(t);
+      if (enUso.length){
+        avisar(`El talle ${t} está en uso en ${enUso.length} ${
+          enUso.length === 1 ? 'producto' : 'productos'}`, true);
+        return;
+      }
+      datos.talles.splice(ix, 1);
+      guardar(); bus.pintar(); avisar('Talle quitado');
+    };
+  });
+
+  const mover = (ix, paso) => {
+    const destino = ix + paso;
+    if (destino < 0 || destino >= datos.talles.length) return;
+    const [t] = datos.talles.splice(ix, 1);
+    datos.talles.splice(destino, 0, t);
+    guardar(); bus.pintar();
+  };
+  document.querySelectorAll('[data-subir-talle]').forEach(b =>
+    b.onclick = () => mover(+b.dataset.subirTalle, -1));
+  document.querySelectorAll('[data-bajar-talle]').forEach(b =>
+    b.onclick = () => mover(+b.dataset.bajarTalle, 1));
+
+  document.querySelectorAll('[data-nombre-talle]').forEach(campo => {
+    campo.onchange = e => {
+      const ix = +e.target.dataset.nombreTalle;
+      const nuevo = e.target.value.trim();
+      if (!nuevo){ bus.pintar(); return; }
+      const viejo = datos.talles[ix];
+      if (nuevo === viejo) return;
+      if (datos.talles.some((t, i) => i !== ix && t === nuevo)){
+        avisar('Ese talle ya está en la lista', true);
+        bus.pintar();
+        return;
+      }
+      /* Se renombra también en los productos: si no, su stock quedaría
+         apuntando a un talle que ya no existe en la lista. */
+      datos.productos.forEach(p => {
+        const fuentes = p.colores ? Object.values(p.colores) : [p.talles];
+        fuentes.forEach(o => {
+          if (o && o[viejo] !== undefined){ o[nuevo] = o[viejo]; delete o[viejo]; }
+        });
+      });
+      datos.talles[ix] = nuevo;
+      guardar(); bus.pintar(); avisar('Talle renombrado');
+    };
+  });
+
+  $('#talle-mas').onclick = () => {
+    const t = $('#talle-nuevo').value.trim().toUpperCase();
+    if (!t) return;
+    if ((datos.talles || []).includes(t)){ avisar('Ese talle ya está', true); return; }
+    datos.talles.push(t);
+    guardar(); bus.pintar(); avisar('Talle agregado');
+  };
+
+  /* ---- colores ---- */
 
   /* Quitar un color de la lista no lo borra de los productos que ya lo usan:
      seguirían teniendo stock cargado con ese nombre y desaparecería de la

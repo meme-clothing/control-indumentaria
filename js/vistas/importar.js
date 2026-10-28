@@ -291,8 +291,20 @@ function volcarStock(p, f){
   }
 }
 
+/* Los talles que trae la planilla y no estaban en la lista del negocio se
+   agregan solos, en el orden de las columnas. Si no, quedarían al final de
+   todas las pantallas y en un orden arbitrario, y la persona no tendría forma
+   de entender por qué sin ir a Ajustes a cargarlos a mano. */
+function sumarTallesNuevos(columnas){
+  if (!Array.isArray(datos.talles)) datos.talles = [];
+  const nuevos = columnas.filter(t => !datos.talles.includes(t));
+  nuevos.forEach(t => datos.talles.push(t));
+  return nuevos;
+}
+
 function aplicarImportacion(buenas){
   let nuevos = 0, actualizados = 0;
+  const tallesSumados = sumarTallesNuevos(ui.previo.talles || []);
 
   buenas.forEach(f => {
     const existente = datos.productos.find(p =>
@@ -328,6 +340,7 @@ function aplicarImportacion(buenas){
 
   guardar();
   ui.previo = null;
-  avisar(`${nuevos} productos nuevos · ${actualizados} actualizados`);
+  avisar(`${nuevos} productos nuevos · ${actualizados} actualizados` +
+    (tallesSumados.length ? ` · talles nuevos: ${tallesSumados.join(', ')}` : ''));
   bus.ir('productos');
 }

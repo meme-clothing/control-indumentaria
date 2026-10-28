@@ -1,5 +1,37 @@
 # Historial de versiones
 
+## 3.4.1
+
+- Eliminar un producto pide confirmación. Antes se borraba de un solo clic, con
+  el botón al lado de Guardar. El cartel dice cuál es el artículo y cuántas
+  unidades tiene en stock, porque eliminar uno con mercadería cargada casi
+  siempre es un error de dedo.
+- La confirmación aclara que el artículo sale de las listas pero que las ventas
+  y los pedidos anteriores no se tocan. Nunca se borró de verdad: se marca
+  inactivo, porque el historial guarda el id del producto y borrarlo dejaría
+  ventas apuntando a la nada.
+
+## 3.4.0
+
+- **Corregido**: en la ficha del producto no había forma de quitar un talle. Se
+  había perdido al pasar el editor a grilla de números. Ahora cada talle tiene
+  su pastilla con un botón para sacarlo, y si tiene unidades cargadas pregunta
+  antes, porque quitarlo pierde ese stock.
+- **Tarjeta de talles en Ajustes**, igual que la de colores: agregar, renombrar,
+  quitar y, sobre todo, **ordenar**. Ese orden manda en todas las pantallas.
+  Antes los talles salían en el orden en que se habían cargado, así que una
+  remera podía mostrar XL antes que M.
+- Renombrar un talle lo renombra en todos los productos, incluso adentro de los
+  colores. No se puede quitar uno que esté en uso.
+- En la ficha, los talles se eligen de esa lista en vez de escribirse a mano.
+- Los talles que trae una planilla y no están en la lista se agregan solos, al
+  final y en el orden de las columnas, y el aviso de importación los nombra.
+
+**Nota de diseño.** La confirmación para quitar un talle se hace en la pastilla
+misma y no con un diálogo. El editor de producto ya es un diálogo, y el sistema
+tiene una sola ranura: abrir otro encima cerraba la ficha entera y se perdía
+todo lo cargado.
+
 ## 3.3.0
 
 Colores por talle.

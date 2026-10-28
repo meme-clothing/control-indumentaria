@@ -50,7 +50,7 @@ export const VENTANA_DIAS = 90;
    La versión también está en package.json; el script de construcción avisa si
    se desincronizan.
    -------------------------------------------------------------------------- */
-export const VERSION = '3.3.0';
+export const VERSION = '3.4.1';
 
 export const DESARROLLO = {
   por: 'Migue',
@@ -120,6 +120,18 @@ export const MEDIO_POR_DEFECTO = 'efectivo';
    El `tono` es solo para dibujar el círculo en pantalla. No tiene que ser
    exacto: tiene que ser reconocible de un vistazo.
    -------------------------------------------------------------------------- */
+/* --------------------------------------------------------------------------
+   TALLES
+
+   La lista del negocio, en el orden en que se quiere ver. Ese orden importa:
+   sin una lista, los talles aparecían en el orden en que se habían cargado, y
+   una remera podía mostrar XL antes que M.
+
+   Se edita desde Ajustes y queda guardada con el resto de la base, por
+   negocio. Un artículo usa los que necesite, no todos.
+   -------------------------------------------------------------------------- */
+export const TALLES_POR_DEFECTO = ['S', 'M', 'L', 'XL'];
+
 export const COLORES_POR_DEFECTO = [
   { nombre: 'Negro',   tono: '#1C1C1C' },
   { nombre: 'Blanco',  tono: '#F4F1EA' },

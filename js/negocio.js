@@ -42,12 +42,26 @@ export const tieneColores = p =>
 export const coloresDe = p => tieneColores(p) ? Object.keys(p.colores) : [];
 
 /* Todos los talles del producto, sin repetir y en el orden en que aparecen. */
+/* Ordena segun la lista del negocio. Lo que no este en la lista va al final,
+   en el orden en que aparecio: asi un talle viejo o importado no desaparece
+   solo porque nadie lo agrego a la lista. */
+export function ordenarTalles(lista){
+  const orden = datos.talles || [];
+  return lista.slice().sort((a, b) => {
+    const ia = orden.indexOf(a), ib = orden.indexOf(b);
+    if (ia === -1 && ib === -1) return 0;
+    if (ia === -1) return 1;
+    if (ib === -1) return -1;
+    return ia - ib;
+  });
+}
+
 export function tallesDe(p){
-  if (!tieneColores(p)) return Object.keys(p.talles || {});
+  if (!tieneColores(p)) return ordenarTalles(Object.keys(p.talles || {}));
   const vistos = [];
   Object.values(p.colores).forEach(porTalle =>
     Object.keys(porTalle || {}).forEach(t => { if (!vistos.includes(t)) vistos.push(t); }));
-  return vistos;
+  return ordenarTalles(vistos);
 }
 
 /* Cada combinacion del producto: { color, talle, cant }. Sin colores, `color`
@@ -85,7 +99,11 @@ export function ajustarStock(p, color, talle, delta){
 export const stockDe = p => variantes(p).reduce((a, v) => a + v.cant, 0);
 
 /* Las combinaciones con unidades. Es lo que se ofrece al vender. */
-export const conStock = p => variantes(p).filter(v => v.cant > 0);
+export const conStock = p => {
+  const orden = tallesDe(p);
+  return variantes(p).filter(v => v.cant > 0)
+    .sort((a, b) => orden.indexOf(a.talle) - orden.indexOf(b.talle));
+};
 
 export const valorStockCosto = p => stockDe(p) * p.costoC;
 export const valorStockVenta = p => stockDe(p) * p.precioC;

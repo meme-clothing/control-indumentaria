@@ -15,7 +15,8 @@
    -------------------------------------------------------------------------- */
 
 import { RUTAS, CLAVE_LOCAL, UMBRAL_POR_DEFECTO, REPONER_HASTA_POR_DEFECTO,
-         VENTANA_DIAS, RECARGOS_POR_DEFECTO, COLORES_POR_DEFECTO } from './config.js';
+         VENTANA_DIAS, RECARGOS_POR_DEFECTO, COLORES_POR_DEFECTO,
+         TALLES_POR_DEFECTO } from './config.js';
 import { disponible, conexion } from './firebase.js';
 import { NEGOCIO_POR_DEFECTO, esNegocioValido, buscarNegocio } from './negocios.js';
 import { avisar } from './utilidades.js';
@@ -32,6 +33,7 @@ const VACIA = () => ({
   reponerHasta: REPONER_HASTA_POR_DEFECTO,
   recargos: { ...RECARGOS_POR_DEFECTO },
   colores: COLORES_POR_DEFECTO.map(c => ({ ...c })),
+  talles: TALLES_POR_DEFECTO.slice(),
   productos: [], ventas: [], movimientos: [], pedidos: []
 });
 
@@ -49,6 +51,18 @@ function conArreglos(d){
   /* Una base guardada antes de los colores no los trae. */
   if (!Array.isArray(r.colores) || !r.colores.length)
     r.colores = COLORES_POR_DEFECTO.map(c => ({ ...c }));
+  /* Una base de antes de la lista de talles no la trae. Se arma con los que ya
+     estén usados en los productos, para no empezar de cero. */
+  if (!Array.isArray(r.talles) || !r.talles.length){
+    const vistos = [];
+    (r.productos || []).forEach(p => {
+      const fuentes = p.colores ? Object.values(p.colores) : [p.talles || {}];
+      fuentes.forEach(o => Object.keys(o || {}).forEach(t => {
+        if (!vistos.includes(t)) vistos.push(t);
+      }));
+    });
+    r.talles = vistos.length ? vistos : TALLES_POR_DEFECTO.slice();
+  }
   return r;
 }
 
@@ -165,6 +179,7 @@ async function cargarDeFirestore(){
       if (c.recargos && typeof c.recargos === 'object')
         datos.recargos = Object.assign({ ...RECARGOS_POR_DEFECTO }, c.recargos);
       if (Array.isArray(c.colores) && c.colores.length) datos.colores = c.colores;
+      if (Array.isArray(c.talles) && c.talles.length) datos.talles = c.talles;
     }
 
     await Promise.all([
@@ -244,7 +259,8 @@ function tomarFoto(){
     foto[col] = new Map(datos[col].map(x => [x.id, JSON.stringify(x)]));
   });
   foto.config = JSON.stringify({ umbral: datos.umbral, reponerHasta: datos.reponerHasta,
-                                 recargos: datos.recargos, colores: datos.colores });
+                                 recargos: datos.recargos, colores: datos.colores,
+                                 talles: datos.talles });
 }
 
 /* Después de traer historial viejo: entra a la foto sin marcar nada como nuevo. */
@@ -324,7 +340,8 @@ async function sincronizarFirestore(){
     }
 
     const cfg = JSON.stringify({ umbral: datos.umbral, reponerHasta: datos.reponerHasta,
-                                 recargos: datos.recargos, colores: datos.colores });
+                                 recargos: datos.recargos, colores: datos.colores,
+                                 talles: datos.talles });
     if (cfg !== foto.config)
       await escribir(documentoDe(db, api, 'config', 'general'), JSON.parse(cfg));
 

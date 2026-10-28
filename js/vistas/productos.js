@@ -5,7 +5,7 @@ import { buscar, activos, stockDe, valorStockVenta, precioDe, conStock,
          pedidosPorEstado, totalPedido, unidadesPedido, cambiosDeCosto,
          recibirPedidos, precioPara, precioFijado, recargoDe,
          umbralDe, reponerHastaDe, tieneColores, coloresDe, tallesDe,
-         cantidadDe, tonoDe, colorCanonico } from '../negocio.js';
+         cantidadDe, tonoDe, colorCanonico, ordenarTalles } from '../negocio.js';
 import { talle, vacio, buscador } from '../componentes.js';
 import { ESTADOS_PEDIDO, MEDIOS_PAGO, UMBRAL_POR_DEFECTO,
          REPONER_HASTA_POR_DEFECTO } from '../config.js';
@@ -90,7 +90,6 @@ export function vistaProductos(){
    -------------------------------------------------------------------------- */
 export function editorProducto(id){
   const p = id ? datos.productos.find(x => x.id === id) : null;
-  const TALLES_NUEVOS = ['S', 'M', 'L', 'XL'];
   const categorias = [...new Set(datos.productos.map(x => x.categoria).filter(Boolean))];
 
   dialogo({
@@ -138,11 +137,12 @@ export function editorProducto(id){
           <h4>Stock</h4>
           <p class="editor-nota">Si el artículo viene en varios colores, agregá
             cada uno y cargá sus talles por separado.</p>
-          <div id="e-talles"></div>
+          <div class="talles-elegidos" id="e-talles-elegidos"></div>
           <div class="agregar-talle">
-            <input type="text" id="e-talle-nuevo" placeholder="Agregar talle (XXL, 46…)">
-            <button class="btn chico" id="e-talle-mas">Agregar</button>
+            <select id="e-talle-nuevo"></select>
+            <button class="btn chico" id="e-talle-mas">Agregar talle</button>
           </div>
+          <div id="e-talles" style="margin-top:12px"></div>
           <div class="agregar-talle" style="margin-top:8px">
             <select id="e-color-nuevo"></select>
             <button class="btn chico" id="e-color-mas">Agregar color</button>
@@ -176,7 +176,7 @@ export function editorProducto(id){
       } else {
         porColor[SIN] = { ...(p ? p.talles : {}) };
       }
-      let listaTalles = p ? tallesDe(p) : TALLES_NUEVOS.slice();
+      let listaTalles = p ? tallesDe(p) : (datos.talles || []).slice();
       if (!listaTalles.length) listaTalles = Object.keys(porColor[SIN] || {});
       if (!p) listaTalles.forEach(t => porColor[SIN][t] = 0);
 
@@ -186,6 +186,42 @@ export function editorProducto(id){
         <label class="talle-campo"><span>${esc(t)}</span>
           <input type="number" min="0" data-color="${esc(color)}" data-talle="${esc(t)}"
             value="${porColor[color][t] ?? 0}"></label>`;
+
+      /* Las pastillas de arriba dicen qué talles usa este artículo y permiten
+         sacarlos. La grilla de abajo es solo para las cantidades. */
+      /* Confirmación en dos pasos, en la pastilla misma. Un diálogo acá no
+         sirve: el editor YA es el diálogo, y abrir otro lo cerraría. */
+      let porQuitar = null;
+
+      const pintarElegidos = () => {
+        $('#e-talles-elegidos').innerHTML = listaTalles.length
+          ? listaTalles.map(t => {
+              const unidades = Object.values(porColor)
+                .reduce((a, o) => a + (Number(o[t]) || 0), 0);
+              if (porQuitar === t) return `
+                <span class="talle-chip confirmando">${esc(t)}
+                  <small>${unidades} ${unidades === 1 ? 'unidad' : 'unidades'}</small>
+                  <button type="button" data-quitar-talle="${esc(t)}">Quitar igual</button>
+                  <button type="button" data-cancelar-quitar="1">No</button>
+                </span>`;
+              return `
+                <span class="talle-chip">${esc(t)}
+                  <button type="button" data-quitar-talle="${esc(t)}"
+                    title="Quitar el talle ${esc(t)} de este artículo">×</button>
+                </span>`;
+            }).join('')
+          : '<span style="font-size:13px;color:var(--tinta-3)">Sin talles todavía.</span>';
+      };
+
+      /* Solo los talles de la lista del negocio que este artículo todavía no
+         usa. La lista se administra en Ajustes. */
+      const pintarTallesDisponibles = () => {
+        const libres = (datos.talles || []).filter(t => !listaTalles.includes(t));
+        $('#e-talle-nuevo').innerHTML = libres.length
+          ? libres.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join('')
+          : '<option value="">No quedan talles por agregar</option>';
+        $('#e-talle-mas').disabled = !libres.length;
+      };
 
       const pintarTalles = () => {
         if (!listaTalles.length){
@@ -219,6 +255,8 @@ export function editorProducto(id){
         $('#e-color-mas').disabled = !libres.length;
       };
 
+      pintarElegidos();
+      pintarTallesDisponibles();
       pintarTalles();
       pintarColoresDisponibles();
 
@@ -272,15 +310,43 @@ export function editorProducto(id){
       $('#e-costo').oninput = recalcular;
       $('#e-margen').oninput = recalcular;
 
-      $('#e-talle-mas').onclick = () => {
-        const t = $('#e-talle-nuevo').value.trim().toUpperCase();
-        if (!t) return;
-        if (listaTalles.includes(t)){ avisar('Ese talle ya está', true); return; }
-        listaTalles.push(t);
-        Object.keys(porColor).forEach(c => porColor[c][t] = 0);
-        $('#e-talle-nuevo').value = '';
+      const repintarTalles = () => {
+        listaTalles = ordenarTalles(listaTalles);
+        pintarElegidos();
+        pintarTallesDisponibles();
         pintarTalles();
       };
+
+      $('#e-talle-mas').onclick = () => {
+        const t = $('#e-talle-nuevo').value;
+        if (!t || listaTalles.includes(t)) return;
+        listaTalles.push(t);
+        Object.keys(porColor).forEach(c => porColor[c][t] = 0);
+        repintarTalles();
+      };
+
+      /* Quitar un talle con unidades borraría ese stock sin avisar, así que
+         la primera pulsación pregunta y la segunda saca. */
+      $('#dlg-cuerpo').addEventListener('click', ev => {
+        if (ev.target.closest('[data-cancelar-quitar]')){
+          porQuitar = null; pintarElegidos(); return;
+        }
+        const q = ev.target.closest('[data-quitar-talle]');
+        if (!q) return;
+        const t = q.dataset.quitarTalle;
+        const unidades = Object.values(porColor)
+          .reduce((a, o) => a + (Number(o[t]) || 0), 0);
+
+        if (unidades > 0 && porQuitar !== t){
+          porQuitar = t;
+          pintarElegidos();
+          return;
+        }
+        porQuitar = null;
+        listaTalles = listaTalles.filter(x => x !== t);
+        Object.keys(porColor).forEach(c => delete porColor[c][t]);
+        repintarTalles();
+      });
 
       /* Al agregar el primer color, lo que estaba cargado sin color pasa a ser
          de ese color. Si no, se perdería el stock que ya había. */
@@ -318,7 +384,7 @@ export function editorProducto(id){
         porColor[c][t] = Math.max(0, parseInt(ev.target.value) || 0);
       });
 
-      $('#e-guardar').onclick = () => {
+      const alGuardar = () => {
         const nombre = $('#e-nombre').value.trim();
         if (!nombre){ avisar('Poné un nombre al producto', true); return; }
         const costoC = aCentavos($('#e-costo').value);
@@ -375,14 +441,48 @@ export function editorProducto(id){
         avisar(p ? 'Producto actualizado' : 'Producto agregado');
       };
 
-      const borrar = $('#e-borrar');
-      if (borrar) borrar.onclick = () => {
-        /* No se borra de verdad: se marca inactivo para no romper el historial
-           de ventas, que guarda el id del producto. */
+      /* Eliminar pide confirmación en el pie de la ficha y no en un diálogo
+         aparte: el editor YA es el diálogo y el sistema tiene una sola ranura,
+         así que abrir otro encima cerraría la ficha y se perdería lo cargado.
+
+         La confirmación dice cuántas unidades tiene el artículo: eliminar uno
+         con mercadería cargada casi siempre es un error de dedo. */
+      const pie = $('#dlg-pie');
+      const pieOriginal = pie ? pie.innerHTML : '';
+
+      const eliminarDeVerdad = () => {
+        /* No se borra: se marca inactivo. El historial de ventas guarda el id
+           del producto, y borrarlo dejaría ventas apuntando a la nada. */
         p.activo = false;
         guardar(); cerrarDialogo(); bus.pintar();
         avisar('Producto eliminado');
       };
+
+      const pedirConfirmacion = () => {
+        const unidades = stockDe(p);
+        pie.innerHTML = `
+          <div class="pie-confirmar">
+            <span>¿Eliminar <b>${esc(p.nombre)}</b>?${unidades
+              ? ` Tiene ${unidades} ${unidades === 1 ? 'unidad' : 'unidades'} en stock.` : ''}
+              <small>Sale de las listas. Las ventas y los pedidos anteriores no se tocan.</small></span>
+            <button class="btn" id="e-no-borrar">No</button>
+            <button class="btn riesgo" id="e-si-borrar">Sí, eliminar</button>
+          </div>`;
+        $('#e-si-borrar').onclick = eliminarDeVerdad;
+        $('#e-no-borrar').onclick = () => {
+          pie.innerHTML = pieOriginal;
+          engancharPie();
+        };
+      };
+
+      const engancharPie = () => {
+        const borrar = $('#e-borrar');
+        if (borrar) borrar.onclick = pedirConfirmacion;
+        const guardarBtn = $('#e-guardar');
+        if (guardarBtn) guardarBtn.onclick = alGuardar;
+      };
+
+      engancharPie();
     }
   });
 }
